@@ -1,0 +1,21 @@
+name: ElytrixBattlePass
+version: '1.0'
+main: pw.elytrix.elytrixbattlepass.ElytrixBattlePass
+api-version: '1.16'
+author: Elytrix
+description: "Боевой пропуск Elytrix"
+softdepend: [PlaceholderAPI, ElytrixSubscribe]
+commands:
+  battlepass:
+    description: "Боевой пропуск"
+    aliases: [bp, elytrixbattlepass, ebp]
+  bpshop:
+    description: "Магазин боевого пропуска"
+    aliases: [bpmagazin, ebpshop]
+  fragment:
+    description: "Фрагменты"
+    aliases: [fragments]
+permissions:
+  elytrixbattlepass.admin:
+    description: "Администрирование боевого пропуска"
+    default: op

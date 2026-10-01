@@ -1,0 +1,1271 @@
+storage:
+  mysql:
+    enabled: false
+    host: localhost
+    port: 3306
+    database: minecraft
+    username: root
+    password: ""
+
+battlepass:
+  start_date: "4.05.2025"
+  cycle_size: 21
+  cycle_cooldown_hours: 24
+  daily_points_limit: 365
+  premium_daily_points_limit: 500
+  daily_burn_percent: 5
+  easy_slots: 7
+  medium_slots: 14
+
+messages:
+  general:
+    quest_started: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aЗадание активировано!"
+    quest_completed: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aЗадание выполнено! Награда: &#F8BEFB%points% поинтов"
+    quest_expired: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cВремя задания истекло. Выдано новое."
+    quest_skipped: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aЗадание пропущено!"
+    daily_limit_reached: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cДневной лимит поинтов достигнут."
+    cycle_cooldown: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cЦикл завершён. Новый набор через &#F8BEFB%time%"
+    cycle_completed: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aВсе задания выполнены! Возвращайтесь через 24 часа."
+    points_burned: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &fСгорело &#F8BEFB%burned_points% поинтов &7(5% от баланса)&f."
+    bossbar_progress: "&#F8BEFB%description% &7— &#F8BEFB%current%&7/&#F8BEFB%required%"
+    bossbar_completed: "&aЗАДАНИЕ ВЫПОЛНЕНО"
+  shop:
+    item_purchased: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aВы приобрели предмет из &#F8BEFBМагазина БП&f!"
+    not_enough_points: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cНедостаточно поинтов!"
+    premium_required: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cТребуется активная подписка ElytriX!"
+    permission_required: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cНедостаточно прав."
+    purchase_confirm: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &fНажмите ещё раз в течение 10 секунд."
+    random_reward: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &fВам выпало: %reward%"
+  admin:
+    no_permission: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cНедостаточно прав."
+    player_not_found: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cИгрок не найден."
+    player_reset: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aПрогресс игрока &#F8BEFB%player% &aсброшен."
+    points_set: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aБаланс &#F8BEFB%player%&a: &#F8BEFB%points% поинтов"
+    points_added: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aИгроку &#F8BEFB%player% &aначислено &#F8BEFB%points% поинтов"
+    level_set: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aИгроку &#F8BEFB%player% &aуровень: &#F8BEFB%level%"
+    fragments_given: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aВыдано &#F8BEFB%amount% фрагментов &aигроку &#F8BEFB%player%"
+
+tasks:
+  break_sand_easy:
+    enabled: true
+    difficulty: EASY
+    type: BLOCK_BREAK
+    name: "Песчаный старт"
+    description: "Сломайте 128 песка"
+    icon: SAND
+    time_minutes: 30
+    skip_cost: 20
+    weight: 4
+    reward:
+      min: 12
+      max: 18
+    requirements:
+      material: SAND
+      amount: "128"
+
+  break_hay_easy:
+    enabled: true
+    difficulty: EASY
+    type: BLOCK_BREAK
+    name: "Фермерский склад"
+    description: "Сломайте 64 снопа сена"
+    icon: HAY_BLOCK
+    time_minutes: 30
+    skip_cost: 20
+    weight: 4
+    reward:
+      min: 12
+      max: 18
+    requirements:
+      material: HAY_BLOCK
+      amount: "64"
+
+  break_stone_easy:
+    enabled: true
+    difficulty: EASY
+    type: BLOCK_BREAK
+    name: "Каменотёс"
+    description: "Сломайте 256 камня"
+    icon: STONE
+    time_minutes: 30
+    skip_cost: 20
+    weight: 5
+    reward:
+      min: 10
+      max: 15
+    requirements:
+      material: STONE
+      amount: "256"
+
+  break_netherrack_easy:
+    enabled: true
+    difficulty: EASY
+    type: BLOCK_BREAK
+    name: "В аду"
+    description: "Сломайте 256 адского камня"
+    icon: NETHERRACK
+    time_minutes: 30
+    skip_cost: 20
+    weight: 4
+    reward:
+      min: 10
+      max: 15
+    requirements:
+      material: NETHERRACK
+      amount: "256"
+
+  break_end_stone_easy:
+    enabled: true
+    difficulty: EASY
+    type: BLOCK_BREAK
+    name: "Край мира"
+    description: "Сломайте 128 камня Края"
+    icon: END_STONE
+    time_minutes: 30
+    skip_cost: 20
+    weight: 3
+    reward:
+      min: 12
+      max: 17
+    requirements:
+      material: END_STONE
+      amount: "128"
+
+  farm_wheat_easy:
+    enabled: true
+    difficulty: EASY
+    type: FARMING
+    name: "Урожай"
+    description: "Соберите 64 пшеницы"
+    icon: WHEAT
+    time_minutes: 35
+    skip_cost: 20
+    weight: 5
+    reward:
+      min: 12
+      max: 18
+    requirements:
+      material: WHEAT
+      amount: "64"
+
+  farm_potato_easy:
+    enabled: true
+    difficulty: EASY
+    type: FARMING
+    name: "Картофель"
+    description: "Соберите 64 картофеля"
+    icon: POTATOES
+    time_minutes: 35
+    skip_cost: 20
+    weight: 5
+    reward:
+      min: 12
+      max: 18
+    requirements:
+      material: POTATOES
+      amount: "64"
+
+  farm_carrot_easy:
+    enabled: true
+    difficulty: EASY
+    type: FARMING
+    name: "Морковь"
+    description: "Соберите 64 моркови"
+    icon: CARROTS
+    time_minutes: 35
+    skip_cost: 20
+    weight: 5
+    reward:
+      min: 12
+      max: 18
+    requirements:
+      material: CARROTS
+      amount: "64"
+
+  farm_beetroots_easy:
+    enabled: true
+    difficulty: EASY
+    type: FARMING
+    name: "Свекла"
+    description: "Соберите 64 свеклы"
+    icon: BEETROOTS
+    time_minutes: 35
+    skip_cost: 20
+    weight: 3
+    reward:
+      min: 12
+      max: 18
+    requirements:
+      material: BEETROOTS
+      amount: "64"
+
+  farm_nether_wart_easy:
+    enabled: true
+    difficulty: EASY
+    type: FARMING
+    name: "Адский нарост"
+    description: "Соберите 96 адских наростов"
+    icon: NETHER_WART
+    time_minutes: 40
+    skip_cost: 20
+    weight: 3
+    reward:
+      min: 13
+      max: 19
+    requirements:
+      material: NETHER_WART
+      amount: "96"
+
+  eat_chorus_easy:
+    enabled: true
+    difficulty: EASY
+    type: ITEM_CONSUME
+    name: "Телепорт"
+    description: "Съешьте 12 плодов хоруса"
+    icon: CHORUS_FRUIT
+    time_minutes: 30
+    skip_cost: 20
+    weight: 4
+    reward:
+      min: 13
+      max: 19
+    requirements:
+      material: CHORUS_FRUIT
+      amount: "12"
+
+  eat_bread_easy:
+    enabled: true
+    difficulty: EASY
+    type: ITEM_CONSUME
+    name: "Голодный"
+    description: "Съешьте 24 хлеба"
+    icon: BREAD
+    time_minutes: 25
+    skip_cost: 20
+    weight: 4
+    reward:
+      min: 10
+      max: 15
+    requirements:
+      material: BREAD
+      amount: "24"
+
+  run_easy:
+    enabled: true
+    difficulty: EASY
+    type: PLAYER_MOVE
+    name: "Разминка"
+    description: "Пробегите 800 блоков"
+    icon: LEATHER_BOOTS
+    time_minutes: 25
+    skip_cost: 20
+    weight: 6
+    reward:
+      min: 10
+      max: 16
+    requirements:
+      mode: running
+      amount: "800"
+
+  jump_easy:
+    enabled: true
+    difficulty: EASY
+    type: PLAYER_MOVE
+    name: "Пружина"
+    description: "Прыгните 500 раз"
+    icon: RABBIT_FOOT
+    time_minutes: 25
+    skip_cost: 20
+    weight: 6
+    reward:
+      min: 10
+      max: 16
+    requirements:
+      mode: jump
+      amount: "500"
+
+  fish_easy:
+    enabled: true
+    difficulty: EASY
+    type: FISH
+    name: "Рыбак"
+    description: "Поймайте 4 рыбы"
+    icon: FISHING_ROD
+    time_minutes: 30
+    skip_cost: 20
+    weight: 4
+    reward:
+      min: 12
+      max: 18
+    requirements:
+      amount: "4"
+
+  craft_bread_easy:
+    enabled: true
+    difficulty: EASY
+    type: CRAFTING
+    name: "Пекарь"
+    description: "Скрафтите 16 хлеба"
+    icon: BREAD
+    time_minutes: 30
+    skip_cost: 20
+    weight: 4
+    reward:
+      min: 12
+      max: 18
+    requirements:
+      material: BREAD
+      amount: "16"
+
+  craft_torch_easy:
+    enabled: true
+    difficulty: EASY
+    type: CRAFTING
+    name: "Осветитель"
+    description: "Скрафтите 64 факела"
+    icon: TORCH
+    time_minutes: 30
+    skip_cost: 20
+    weight: 4
+    reward:
+      min: 10
+      max: 15
+    requirements:
+      material: TORCH
+      amount: "64"
+
+  craft_ladder_easy:
+    enabled: true
+    difficulty: EASY
+    type: CRAFTING
+    name: "Столяр"
+    description: "Скрафтите 32 лестницы"
+    icon: LADDER
+    time_minutes: 30
+    skip_cost: 20
+    weight: 3
+    reward:
+      min: 12
+      max: 18
+    requirements:
+      material: LADDER
+      amount: "32"
+
+  tnt_easy:
+    enabled: true
+    difficulty: EASY
+    type: TNT_EXPLODE
+    name: "Бах"
+    description: "Взорвите 4 динамита"
+    icon: TNT
+    time_minutes: 30
+    skip_cost: 20
+    weight: 3
+    reward:
+      min: 13
+      max: 19
+    requirements:
+      amount: "4"
+
+  damage_zombie_easy:
+    enabled: true
+    difficulty: EASY
+    type: ENTITY_DAMAGE
+    name: "Охотник"
+    description: "Нанесите 80 урона зомби"
+    icon: IRON_SWORD
+    time_minutes: 30
+    skip_cost: 20
+    weight: 4
+    reward:
+      min: 12
+      max: 18
+    requirements:
+      entity: ZOMBIE
+      amount: "80"
+
+  damage_cow_easy:
+    enabled: true
+    difficulty: EASY
+    type: ENTITY_DAMAGE
+    name: "Мясник"
+    description: "Нанесите 60 урона коровам"
+    icon: BEEF
+    time_minutes: 25
+    skip_cost: 20
+    weight: 3
+    reward:
+      min: 10
+      max: 15
+    requirements:
+      entity: COW
+      amount: "60"
+
+  damage_pig_easy:
+    enabled: true
+    difficulty: EASY
+    type: ENTITY_DAMAGE
+    name: "Свиновод"
+    description: "Нанесите 60 урона свиньям"
+    icon: PORKCHOP
+    time_minutes: 25
+    skip_cost: 20
+    weight: 3
+    reward:
+      min: 10
+      max: 15
+    requirements:
+      entity: PIG
+      amount: "60"
+
+  kill_zombie_easy:
+    enabled: true
+    difficulty: EASY
+    type: KILL_ENTITY
+    name: "Против нежити"
+    description: "Убейте 15 зомби"
+    icon: ROTTEN_FLESH
+    time_minutes: 35
+    skip_cost: 20
+    weight: 4
+    reward:
+      min: 13
+      max: 19
+    requirements:
+      entity: ZOMBIE
+      amount: "15"
+
+  kill_skeleton_easy:
+    enabled: true
+    difficulty: EASY
+    type: KILL_ENTITY
+    name: "Костолом"
+    description: "Убейте 12 скелетов"
+    icon: BONE
+    time_minutes: 35
+    skip_cost: 20
+    weight: 3
+    reward:
+      min: 13
+      max: 19
+    requirements:
+      entity: SKELETON
+      amount: "12"
+
+  pickup_iron_easy:
+    enabled: true
+    difficulty: EASY
+    type: PICKUP_ITEM
+    name: "Собиратель"
+    description: "Поднимите 96 пшеницы"
+    icon: WHEAT
+    time_minutes: 30
+    skip_cost: 20
+    weight: 3
+    reward:
+      min: 11
+      max: 16
+    requirements:
+      material: WHEAT
+      amount: "96"
+
+  pickup_iron_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: PICKUP_ITEM
+    name: "Шахтёр"
+    description: "Поднимите 48 железных слитков"
+    icon: IRON_INGOT
+    time_minutes: 35
+    skip_cost: 35
+    weight: 4
+    reward:
+      min: 18
+      max: 26
+    requirements:
+      material: IRON_INGOT
+      amount: "48"
+
+  break_obsidian_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: BLOCK_BREAK
+    name: "Обсидиан"
+    description: "Сломайте 48 обсидиана"
+    icon: OBSIDIAN
+    time_minutes: 45
+    skip_cost: 35
+    weight: 3
+    reward:
+      min: 18
+      max: 26
+    requirements:
+      material: OBSIDIAN
+      amount: "48"
+
+  break_crying_obsidian_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: BLOCK_BREAK
+    name: "Плачущий обсидиан"
+    description: "Сломайте 32 плачущего обсидиана"
+    icon: CRYING_OBSIDIAN
+    time_minutes: 45
+    skip_cost: 35
+    weight: 3
+    reward:
+      min: 18
+      max: 26
+    requirements:
+      material: CRYING_OBSIDIAN
+      amount: "32"
+
+  break_gold_blocks_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: BLOCK_BREAK
+    name: "Золотой запас"
+    description: "Сломайте 16 золотых блоков"
+    icon: GOLD_BLOCK
+    time_minutes: 40
+    skip_cost: 35
+    weight: 3
+    reward:
+      min: 18
+      max: 26
+    requirements:
+      material: GOLD_BLOCK
+      amount: "16"
+
+  break_diamond_ore_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: BLOCK_BREAK
+    name: "Алмазный охотник"
+    description: "Сломайте 24 алмазной руды"
+    icon: DIAMOND_ORE
+    time_minutes: 50
+    skip_cost: 35
+    weight: 3
+    reward:
+      min: 20
+      max: 28
+    requirements:
+      material: DIAMOND_ORE
+      amount: "24"
+
+  break_iron_ore_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: BLOCK_BREAK
+    name: "Железный запас"
+    description: "Сломайте 64 железной руды"
+    icon: IRON_ORE
+    time_minutes: 45
+    skip_cost: 35
+    weight: 3
+    reward:
+      min: 17
+      max: 24
+    requirements:
+      material: IRON_ORE
+      amount: "64"
+
+  break_diamond_block_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: BLOCK_BREAK
+    name: "Алмазный склад"
+    description: "Сломайте 12 алмазных блоков"
+    icon: DIAMOND_BLOCK
+    time_minutes: 45
+    skip_cost: 35
+    weight: 2
+    reward:
+      min: 22
+      max: 30
+    requirements:
+      material: DIAMOND_BLOCK
+      amount: "12"
+
+  break_enchanting_table_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: BLOCK_BREAK
+    name: "Разрушитель магии"
+    description: "Сломайте 24 стола чар"
+    icon: ENCHANTING_TABLE
+    time_minutes: 45
+    skip_cost: 35
+    weight: 3
+    reward:
+      min: 18
+      max: 26
+    requirements:
+      material: ENCHANTING_TABLE
+      amount: "24"
+
+  enchant_sword_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: ENCHANT_ITEM
+    name: "Чародей"
+    description: "Зачаруйте алмазный меч 8 раз"
+    icon: ENCHANTING_TABLE
+    time_minutes: 45
+    skip_cost: 35
+    weight: 3
+    reward:
+      min: 18
+      max: 26
+    requirements:
+      material: DIAMOND_SWORD
+      amount: "8"
+
+  invis_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: ITEM_CONSUME
+    name: "Тень"
+    description: "Выпейте 8 зелий невидимости"
+    icon: POTION
+    time_minutes: 45
+    skip_cost: 35
+    weight: 3
+    reward:
+      min: 18
+      max: 26
+    requirements:
+      material: POTION
+      amount: "8"
+      potion_type: INVISIBILITY
+
+  speed_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: ITEM_CONSUME
+    name: "Скорость"
+    description: "Выпейте 8 зелий скорости II"
+    icon: POTION
+    time_minutes: 45
+    skip_cost: 35
+    weight: 3
+    reward:
+      min: 18
+      max: 26
+    requirements:
+      material: POTION
+      amount: "8"
+      potion_type: SPEED
+      require_upgraded: "true"
+
+  fire_res_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: ITEM_CONSUME
+    name: "Огнестойкий"
+    description: "Выпейте 6 зелий огнестойкости"
+    icon: POTION
+    time_minutes: 40
+    skip_cost: 35
+    weight: 3
+    reward:
+      min: 18
+      max: 26
+    requirements:
+      material: POTION
+      amount: "6"
+      potion_type: FIRE_RESISTANCE
+
+  eat_gapple_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: ITEM_CONSUME
+    name: "Золотой аппетит"
+    description: "Съешьте 16 золотых яблок"
+    icon: GOLDEN_APPLE
+    time_minutes: 40
+    skip_cost: 35
+    weight: 3
+    reward:
+      min: 20
+      max: 28
+    requirements:
+      material: GOLDEN_APPLE
+      amount: "16"
+
+  run_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: PLAYER_MOVE
+    name: "Марафон"
+    description: "Пробегите 1800 блоков"
+    icon: GOLDEN_BOOTS
+    time_minutes: 35
+    skip_cost: 35
+    weight: 4
+    reward:
+      min: 17
+      max: 24
+    requirements:
+      mode: running
+      amount: "1800"
+
+  elytra_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: PLAYER_MOVE
+    name: "Полёт"
+    description: "Пролетите на элитрах 1200 блоков"
+    icon: ELYTRA
+    time_minutes: 35
+    skip_cost: 35
+    weight: 3
+    reward:
+      min: 18
+      max: 26
+    requirements:
+      mode: elytra
+      amount: "1200"
+
+  damage_player_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: ENTITY_DAMAGE
+    name: "Дуэлянт"
+    description: "Нанесите 60 урона игрокам"
+    icon: DIAMOND_SWORD
+    time_minutes: 40
+    skip_cost: 35
+    weight: 2
+    reward:
+      min: 20
+      max: 28
+    requirements:
+      entity: PLAYER
+      amount: "60"
+
+  kill_creeper_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: KILL_ENTITY
+    name: "Сапёр"
+    description: "Убейте 10 криперов"
+    icon: CREEPER_HEAD
+    time_minutes: 40
+    skip_cost: 35
+    weight: 3
+    reward:
+      min: 18
+      max: 26
+    requirements:
+      entity: CREEPER
+      amount: "10"
+
+  kill_wither_skeleton_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: KILL_ENTITY
+    name: "Визер-скелеты"
+    description: "Убейте 6 визер-скелетов"
+    icon: WITHER_SKELETON_SKULL
+    time_minutes: 50
+    skip_cost: 35
+    weight: 2
+    reward:
+      min: 22
+      max: 30
+    requirements:
+      entity: WITHER_SKELETON
+      amount: "6"
+
+  kill_piglin_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: KILL_ENTITY
+    name: "Пиглины"
+    description: "Убейте 10 пиглинов"
+    icon: GOLD_INGOT
+    time_minutes: 45
+    skip_cost: 35
+    weight: 3
+    reward:
+      min: 20
+      max: 28
+    requirements:
+      entity: PIGLIN
+      amount: "10"
+
+  kill_blaze_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: KILL_ENTITY
+    name: "Ифриты"
+    description: "Убейте 8 ифритов"
+    icon: BLAZE_ROD
+    time_minutes: 50
+    skip_cost: 35
+    weight: 2
+    reward:
+      min: 22
+      max: 30
+    requirements:
+      entity: BLAZE
+      amount: "8"
+
+  fish_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: FISH
+    name: "Профи-рыбак"
+    description: "Поймайте 16 рыб"
+    icon: COD
+    time_minutes: 45
+    skip_cost: 35
+    weight: 3
+    reward:
+      min: 18
+      max: 26
+    requirements:
+      amount: "16"
+
+  spawner_zombie_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: SPAWNER_USE
+    name: "Спавнер"
+    description: "Установите яйцо зомби в спавнер"
+    icon: SPAWNER
+    time_minutes: 40
+    skip_cost: 35
+    weight: 2
+    reward:
+      min: 20
+      max: 28
+    requirements:
+      entity: ZOMBIE
+      amount: "1"
+
+  spawner_creeper_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: SPAWNER_USE
+    name: "Взрывной спавнер"
+    description: "Установите яйцо крипера в спавнер"
+    icon: SPAWNER
+    time_minutes: 45
+    skip_cost: 35
+    weight: 2
+    reward:
+      min: 22
+      max: 30
+    requirements:
+      entity: CREEPER
+      amount: "1"
+
+  spawner_skeleton_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: SPAWNER_USE
+    name: "Костяной спавнер"
+    description: "Установите яйцо скелета в спавнер"
+    icon: SPAWNER
+    time_minutes: 45
+    skip_cost: 35
+    weight: 2
+    reward:
+      min: 22
+      max: 30
+    requirements:
+      entity: SKELETON
+      amount: "1"
+
+  have_exp_medium:
+    enabled: true
+    difficulty: MEDIUM
+    type: HAVE_EXP
+    name: "Опытный"
+    description: "Накопите 5000 опыта"
+    icon: EXPERIENCE_BOTTLE
+    time_minutes: 40
+    skip_cost: 35
+    weight: 3
+    reward:
+      min: 18
+      max: 26
+    requirements:
+      amount: "5000"
+
+  ancient_debris_hard:
+    enabled: true
+    difficulty: HARD
+    type: BLOCK_BREAK
+    name: "Незеровые глубины"
+    description: "Сломайте 4 древних обломка"
+    icon: ANCIENT_DEBRIS
+    time_minutes: 60
+    skip_cost: 50
+    weight: 2
+    reward:
+      min: 28
+      max: 40
+    requirements:
+      material: ANCIENT_DEBRIS
+      amount: "4"
+
+  ancient_debris_extra_hard:
+    enabled: true
+    difficulty: HARD
+    type: BLOCK_BREAK
+    name: "Древний рудокоп"
+    description: "Сломайте 8 древних обломков"
+    icon: ANCIENT_DEBRIS
+    time_minutes: 80
+    skip_cost: 50
+    weight: 1
+    reward:
+      min: 35
+      max: 48
+    requirements:
+      material: ANCIENT_DEBRIS
+      amount: "8"
+
+  netherite_block_hard:
+    enabled: true
+    difficulty: HARD
+    type: BLOCK_BREAK
+    name: "Тяжёлая роскошь"
+    description: "Сломайте 2 незеритовых блока"
+    icon: NETHERITE_BLOCK
+    time_minutes: 60
+    skip_cost: 50
+    weight: 1
+    reward:
+      min: 32
+      max: 45
+    requirements:
+      material: NETHERITE_BLOCK
+      amount: "2"
+
+  dragon_egg_hard:
+    enabled: true
+    difficulty: HARD
+    type: HAVE_ITEM
+    name: "Реликвия"
+    description: "Получите яйцо дракона"
+    icon: DRAGON_EGG
+    time_minutes: 90
+    skip_cost: 50
+    weight: 1
+    reward:
+      min: 35
+      max: 50
+    requirements:
+      material: DRAGON_EGG
+      amount: "1"
+
+  have_netherite_ingot_hard:
+    enabled: true
+    difficulty: HARD
+    type: HAVE_ITEM
+    name: "Незеритовый запас"
+    description: "Имейте 8 незеритовых слитков"
+    icon: NETHERITE_INGOT
+    time_minutes: 70
+    skip_cost: 50
+    weight: 2
+    reward:
+      min: 30
+      max: 42
+    requirements:
+      material: NETHERITE_INGOT
+      amount: "8"
+
+  have_totem_hard:
+    enabled: true
+    difficulty: HARD
+    type: HAVE_ITEM
+    name: "Коллекция тотемов"
+    description: "Имейте 4 тотема бессмертия"
+    icon: TOTEM_OF_UNDYING
+    time_minutes: 90
+    skip_cost: 50
+    weight: 1
+    reward:
+      min: 35
+      max: 48
+    requirements:
+      material: TOTEM_OF_UNDYING
+      amount: "4"
+
+  gapple_hard:
+    enabled: true
+    difficulty: HARD
+    type: HAVE_ITEM
+    name: "Золотой запас"
+    description: "Имейте 96 золотых яблок"
+    icon: GOLDEN_APPLE
+    time_minutes: 60
+    skip_cost: 50
+    weight: 2
+    reward:
+      min: 26
+      max: 36
+    requirements:
+      material: GOLDEN_APPLE
+      amount: "96"
+
+  strength_hard:
+    enabled: true
+    difficulty: HARD
+    type: ITEM_CONSUME
+    name: "Берсерк"
+    description: "Выпейте 14 зелий силы II"
+    icon: POTION
+    time_minutes: 60
+    skip_cost: 50
+    weight: 2
+    reward:
+      min: 28
+      max: 40
+    requirements:
+      material: POTION
+      amount: "14"
+      potion_type: STRENGTH
+      require_upgraded: "true"
+
+  exp_hard:
+    enabled: true
+    difficulty: HARD
+    type: HAVE_EXP
+    name: "Архимаг"
+    description: "Накопите 25000 опыта"
+    icon: EXPERIENCE_BOTTLE
+    time_minutes: 70
+    skip_cost: 50
+    weight: 2
+    reward:
+      min: 28
+      max: 40
+    requirements:
+      amount: "25000"
+
+  player_damage_hard:
+    enabled: true
+    difficulty: HARD
+    type: ENTITY_DAMAGE
+    name: "Гладиатор"
+    description: "Нанесите 180 урона игрокам"
+    icon: NETHERITE_SWORD
+    time_minutes: 70
+    skip_cost: 50
+    weight: 1
+    reward:
+      min: 32
+      max: 45
+    requirements:
+      entity: PLAYER
+      amount: "180"
+
+  kill_wither_skeleton_hard:
+    enabled: true
+    difficulty: HARD
+    type: KILL_ENTITY
+    name: "Черепа"
+    description: "Убейте 12 визер-скелетов"
+    icon: WITHER_SKELETON_SKULL
+    time_minutes: 70
+    skip_cost: 50
+    weight: 1
+    reward:
+      min: 30
+      max: 42
+    requirements:
+      entity: WITHER_SKELETON
+      amount: "12"
+
+  kill_ender_dragon_hard:
+    enabled: true
+    difficulty: HARD
+    type: KILL_ENTITY
+    name: "Убийца дракона"
+    description: "Убейте дракона Края"
+    icon: DRAGON_EGG
+    time_minutes: 120
+    skip_cost: 50
+    weight: 1
+    reward:
+      min: 45
+      max: 60
+    requirements:
+      entity: ENDER_DRAGON
+      amount: "1"
+
+  kill_wither_hard:
+    enabled: true
+    difficulty: HARD
+    type: KILL_ENTITY
+    name: "Убийца иссушителя"
+    description: "Убейте иссушителя"
+    icon: NETHER_STAR
+    time_minutes: 120
+    skip_cost: 50
+    weight: 1
+    reward:
+      min: 45
+      max: 60
+    requirements:
+      entity: WITHER
+      amount: "1"
+
+  kill_ravager_hard:
+    enabled: true
+    difficulty: HARD
+    type: KILL_ENTITY
+    name: "Мародёр"
+    description: "Убейте 4 разорителей"
+    icon: SADDLE
+    time_minutes: 80
+    skip_cost: 50
+    weight: 1
+    reward:
+      min: 32
+      max: 45
+    requirements:
+      entity: RAVAGER
+      amount: "4"
+
+  run_hard:
+    enabled: true
+    difficulty: HARD
+    type: PLAYER_MOVE
+    name: "Выносливость"
+    description: "Пробегите 3000 блоков"
+    icon: NETHERITE_BOOTS
+    time_minutes: 50
+    skip_cost: 50
+    weight: 2
+    reward:
+      min: 26
+      max: 36
+    requirements:
+      mode: running
+      amount: "3000"
+
+  jump_hard:
+    enabled: true
+    difficulty: HARD
+    type: PLAYER_MOVE
+    name: "Гиперактивность"
+    description: "Прыгните 1800 раз"
+    icon: SLIME_BLOCK
+    time_minutes: 50
+    skip_cost: 50
+    weight: 2
+    reward:
+      min: 26
+      max: 36
+    requirements:
+      mode: jump
+      amount: "1800"
+
+  elytra_hard:
+    enabled: true
+    difficulty: HARD
+    type: PLAYER_MOVE
+    name: "Дальний рейс"
+    description: "Пролетите 2600 блоков на элитрах"
+    icon: ELYTRA
+    time_minutes: 55
+    skip_cost: 50
+    weight: 2
+    reward:
+      min: 28
+      max: 38
+    requirements:
+      mode: elytra
+      amount: "2600"
+
+  swim_hard:
+    enabled: true
+    difficulty: HARD
+    type: PLAYER_MOVE
+    name: "Пловец"
+    description: "Проплывите 800 блоков"
+    icon: WATER_BUCKET
+    time_minutes: 60
+    skip_cost: 50
+    weight: 2
+    reward:
+      min: 28
+      max: 40
+    requirements:
+      mode: swimming
+      amount: "800"
+
+  name_tag_hard:
+    enabled: true
+    difficulty: HARD
+    type: INTERACT_ENTITY
+    name: "Коллекционер"
+    description: "Используйте 6 бирок"
+    icon: NAME_TAG
+    time_minutes: 55
+    skip_cost: 50
+    weight: 2
+    reward:
+      min: 26
+      max: 36
+    requirements:
+      material: NAME_TAG
+      amount: "6"
+
+  resurrect_hard:
+    enabled: true
+    difficulty: HARD
+    type: RESURRECT
+    name: "Последний шанс"
+    description: "Воспользуйтесь тотемом"
+    icon: TOTEM_OF_UNDYING
+    time_minutes: 80
+    skip_cost: 50
+    weight: 1
+    reward:
+      min: 35
+      max: 50
+    requirements:
+      amount: "1"
+
+  enchant_pickaxe_hard:
+    enabled: true
+    difficulty: HARD
+    type: ENCHANT_ITEM
+    name: "Мастер чар"
+    description: "Зачаруйте алмазную кирку 20 раз"
+    icon: DIAMOND_PICKAXE
+    time_minutes: 70
+    skip_cost: 50
+    weight: 2
+    reward:
+      min: 28
+      max: 40
+    requirements:
+      material: DIAMOND_PICKAXE
+      amount: "20"
+
+  craft_beacon_hard:
+    enabled: true
+    difficulty: HARD
+    type: CRAFTING
+    name: "Маяк"
+    description: "Скрафтите маяк"
+    icon: BEACON
+    time_minutes: 90
+    skip_cost: 50
+    weight: 1
+    reward:
+      min: 38
+      max: 50
+    requirements:
+      material: BEACON
+      amount: "1"

@@ -78,7 +78,7 @@ public class LevelMenu implements InventoryHolder {
                 QuestStatus status = plugin.getQuestManager().getStatus(data, levelId, quest.getId());
                 QuestEntry entry = data.getEntry(levelId, quest.getId());
                 int progress = entry != null ? entry.getProgress() : 0;
-                inventory.setItem(QUEST_SLOTS[slotIndex], buildQuestItem(quest, status, progress));
+                inventory.setItem(QUEST_SLOTS[slotIndex], buildQuestItem(quest, status, progress, data));
             }
             slotIndex++;
         }
@@ -104,16 +104,33 @@ public class LevelMenu implements InventoryHolder {
                 .build());
     }
 
-    private ItemStack buildQuestItem(Quest quest, QuestStatus status, int progress) {
+    private ItemStack buildQuestItem(Quest quest, QuestStatus status, int progress, PlayerQuestData data) {
         if (status == QuestStatus.LOCKED) {
+            int previousId = -1;
+            QuestLevel currentLevel = plugin.getQuestManager().getLevel(quest.getLevelId());
+            if (currentLevel != null) {
+                for (Integer id : currentLevel.getQuests().keySet()) {
+                    if (id < quest.getId() && id > previousId) previousId = id;
+                }
+            }
+            long remaining = previousId > 0
+                    ? plugin.getQuestManager().getQuestCooldownRemaining(data, quest.getLevelId(), previousId) : 0L;
+            if (remaining > 0L) {
+                long seconds = (remaining + 999L) / 1000L;
+                long hours = seconds / 3600L;
+                long minutes = (seconds % 3600L) / 60L;
+                long rest = seconds % 60L;
+                String time = hours > 0 ? hours + " ч. " + minutes + " мин." : minutes + " мин. " + rest + " сек.";
+                return new ItemBuilder(Material.CLOCK)
+                        .name("&7« &eОжидание &7»")
+                        .lore("&#F8BEFB&l┃ ", "&#F8BEFB&l┃ &fСледующее задание доступно через:",
+                                "&#F8BEFB&l┃ &e" + time)
+                        .build();
+            }
             return new ItemBuilder(Material.BARRIER)
                     .name("&7« &cЗакрыто &7»")
-                    .lore(
-                            "&#F8BEFB&l┃ ",
-                            "&#F8BEFB&l┃ &fСтатус: &cЗаблокировано",
-                            "&#F8BEFB&l┃ ",
-                            "&7● &cСначала выполните предыдущее задание"
-                    )
+                    .lore("&#F8BEFB&l┃ ", "&#F8BEFB&l┃ &fСтатус: &cЗаблокировано",
+                            "&#F8BEFB&l┃ ", "&7● &cСначала выполните предыдущее задание")
                     .build();
         }
 

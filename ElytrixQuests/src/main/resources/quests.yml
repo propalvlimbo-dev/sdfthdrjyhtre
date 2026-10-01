@@ -5,10 +5,6 @@
 #   levels:
 #     <номер уровня>:
 #       name: "Название уровня"          — титул в меню
-#       mega-reward:                     — награда за ПРОХОЖДЕНИЕ уровня
-#         commands:                      —   (выдаётся после забора награды
-#           - "консольная команда"       --    последнего задания уровня)
-#         message: "..."                 —   резерв (в код не выводится)
 #       quests:
 #         <номер задания>:
 #           name: "Название"
@@ -64,7 +60,7 @@
 #   SHEAR_SHEEP, FISH_ITEM, ENCHANT_ITEM, CHAT_MESSAGE, DEATH,
 #   LEVEL_UP (текущий уровень), TRAVEL_DISTANCE (метров), PLAYTIME, JOIN_SERVER,
 #   ADVANCEMENT (advancement: "minecraft:story/mine_stone"),
-#   POTION_EFFECT (potion: "SPEED"), MONEY_BALANCE (баланс Vault).
+#   POTION_EFFECT (potion: "SPEED"), MONEY_BALANCE (баланс PlayerPoints).
 #
 # Параметр квеста читается из ПЕРВОГО найденного ключа:
 #   trigger | region | value | advancement | message | potion | kit
@@ -73,11 +69,6 @@
 levels:
   1:
     name: "Знакомства"
-    mega-reward:
-      commands:
-        - "case give %player% coins 2"
-        - "kit give elder %player%"
-      message: "&aПолучена Мега-награда за уровень Знакомства!"
     quests:
       1:
         name: "Изучи меню помощи"
@@ -86,13 +77,15 @@ levels:
           - "&#F8BEFB&l┃ &fЦель: &#F8BEFBУзнать основы сервера"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &7● &#F8BEFB50 Коинов"
+          - "&#F8BEFB&l┃ &7● &fКоин Кейс &f×1"
+          - "&#F8BEFB&l┃ &7● &fЗелье скорости &f×1"
         icon: PAPER
         type: COMMAND_TRIGGER
         trigger: "помощь"
         amount: 1
         rewards:
-          - "p give %player% 50"
+          - 'case give %player% coins 1'
+          - 'give %player% potion{Potion:"minecraft:swiftness"} 1'
       2:
         name: "Запривать территорию"
         lore:
@@ -100,14 +93,14 @@ levels:
           - "&#F8BEFB&l┃ &fКоманда: &#F8BEFB/rg claim [название]"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &7● &fКоинов &#F8BEFB50"
-          - "&#F8BEFB&l┃ &7● &#F8BEFBБесплатный Кейс &f×1"
+          - "&#F8BEFB&l┃ &7● &fБесплатный Кейс &f×1"
+          - "&#F8BEFB&l┃ &7● &fСтрела &f×16"
         icon: WOODEN_AXE
         type: REGION_CLAIM
         amount: 1
         rewards:
-          - "p give %player% 50"
-          - "case give %player% donfree 1"
+          - 'case give %player% donfree 1'
+          - 'give %player% arrow 16'
       3:
         name: "Создай свой дом"
         lore:
@@ -115,13 +108,15 @@ levels:
           - "&#F8BEFB&l┃ &fКоманда: &#F8BEFB/sethome [название]"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &7● &fКоинов &#F8BEFB70"
+          - "&#F8BEFB&l┃ &7● &fАлмазная кирка &f(Эффективность III)"
+          - "&#F8BEFB&l┃ &7● &fАлмаз &f×2"
         icon: RED_BED
         type: COMMAND_TRIGGER
         trigger: "sethome"
         amount: 1
         rewards:
-          - "p give %player% 70"
+          - 'give %player% diamond_pickaxe{Enchantments:[{id:"minecraft:efficiency",lvl:3s}]} 1'
+          - 'give %player% diamond 2'
       4:
         name: "Пригласи в дом"
         lore:
@@ -129,13 +124,15 @@ levels:
           - "&#F8BEFB&l┃ &fКоманда: &#F8BEFB/invitehome <игрок> <дом>"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &7● &fКоинов &#F8BEFB70"
+          - "&#F8BEFB&l┃ &7● &fЭндер-жемчуг &f×4"
+          - "&#F8BEFB&l┃ &7● &fЗолотое яблоко &f×2"
         icon: OAK_DOOR
         type: COMMAND_TRIGGER
         trigger: "invitehome"
         amount: 1
         rewards:
-          - "p give %player% 70"
+          - 'give %player% ender_pearl 4'
+          - 'give %player% golden_apple 2'
       5:
         name: "Посети варп"
         lore:
@@ -143,12 +140,16 @@ levels:
           - "&#F8BEFB&l┃ &fКоманда: &#F8BEFB/warp"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &7● &fКоинов &#F8BEFB70"
+          - "&#F8BEFB&l┃ &7● &fЗолотое яблоко &f×2"
+          - "&#F8BEFB&l┃ &7● &fЗелье скорости &f×1"
+          - "&#F8BEFB&l┃ &7● &fКоины &f×25"
         icon: ENDER_PEARL
         type: WARP_TELEPORT
         amount: 1
         rewards:
-          - "p give %player% 70"
+          - 'give %player% golden_apple 2'
+          - 'give %player% potion{Potion:"minecraft:swiftness"} 1'
+          - 'eco give %player% 25'
       6:
         name: "Бесплатный донат"
         lore:
@@ -156,14 +157,16 @@ levels:
           - "&#F8BEFB&l┃ &fГде: &#F8BEFBБесплатный кейс"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &7● &#F8BEFBШар Новичка &f×1"
-          - "&#F8BEFB&l┃ &7● &#F8BEFBКоин Кейс &f×1"
+          - "&#F8BEFB&l┃ &7● &fШар Новичка &f×1"
+          - "&#F8BEFB&l┃ &7● &fАлмазный меч &f(Острота II)"
+          - "&#F8BEFB&l┃ &7● &fСтрела &f×16"
         icon: CHEST
         type: DONATE_RECEIVE
         amount: 1
         rewards:
-          - "shadowci give %player% shar1"
-          - "case give %player% coins 1"
+          - 'shadowci give %player% shar1'
+          - 'give %player% diamond_sword{Enchantments:[{id:"minecraft:sharpness",lvl:2s},{id:"minecraft:fire_aspect",lvl:1s},{id:"minecraft:unbreaking",lvl:2s}]} 1'
+          - 'give %player% arrow 16'
       7:
         name: "Кит привилегии"
         lore:
@@ -171,12 +174,16 @@ levels:
           - "&#F8BEFB&l┃ &fЕсли кит на КД: &#F8BEFBЗачтётся автоматически"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &7● &#F8BEFBКоин Кейс &f×1"
+          - "&#F8BEFB&l┃ &7● &fЩит &f×1"
+          - "&#F8BEFB&l┃ &7● &fСтрела &f×16"
+          - "&#F8BEFB&l┃ &7● &fЭндер-жемчуг &f×4"
         icon: IRON_SWORD
         type: KIT_CLAIM
         amount: 1
         rewards:
-          - "case give %player% coins 1"
+          - 'give %player% shield 1'
+          - 'give %player% arrow 16'
+          - 'give %player% ender_pearl 4'
       8:
         name: "PvP на арене"
         lore:
@@ -185,15 +192,15 @@ levels:
           - "&#F8BEFB&l┃ &fПовторные убийства: &#F8BEFBНе засчитываются"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &7● &fКоинов &#F8BEFB70"
-          - "&#F8BEFB&l┃ &7● &#F8BEFBШар Змеи &f×1"
+          - "&#F8BEFB&l┃ &7● &fШар Змеи &f×1"
+          - "&#F8BEFB&l┃ &7● &fЗолотое яблоко &f×1"
         icon: DIAMOND_SWORD
         type: KILL_PLAYER_UNIQUE
         region: "pvp"
         amount: 3
         rewards:
-          - "p give %player% 70"
-          - "shadowci give %player% shar2"
+          - 'shadowci give %player% shar2'
+          - 'give %player% golden_apple 1'
       9:
         name: "Тотем бессмертия"
         lore:
@@ -201,14 +208,14 @@ levels:
           - "&#F8BEFB&l┃ &fПредмет: &#F8BEFBTotem of Undying"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &7● &#F8BEFBКоин Кейс &f×2"
-          - "&#F8BEFB&l┃ &7● &fКнига &7«&6Солнечные оковы&7» &f×1"
+          - "&#F8BEFB&l┃ &7● &fСолнечные оковы &f×1"
+          - "&#F8BEFB&l┃ &7● &fЗелье огнестойкости &f×1"
         icon: TOTEM_OF_UNDYING
         type: USE_TOTEM
         amount: 6
         rewards:
-          - "case give %player% coins 2"
-          - "elytrixitem:ei give %player% enchant_sun_shackles 1"
+          - 'elytrixitem:ei give %player% enchant_sun_shackles 1'
+          - 'give %player% potion{Potion:"minecraft:fire_resistance"} 1'
       10:
         name: "Привязка аккаунта"
         lore:
@@ -218,13 +225,165 @@ levels:
           - "&#F8BEFB&l┃ &fУже привязан: &#F8BEFBвыполнится сразу по клику"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &7● &fКоинов &#F8BEFB100"
-          - "&#F8BEFB&l┃ &7● &#F8BEFBБесплатный Кейс &f×2"
-          - "&#F8BEFB&l┃ &7● &#F8BEFBШар Змеи &f×1"
+          - "&#F8BEFB&l┃ &7● &fБесплатный Кейс &f×1"
+          - "&#F8BEFB&l┃ &7● &fШар Змеи &f×1"
+          - "&#F8BEFB&l┃ &7● &fКоины &f×50"
         icon: NAME_TAG
         type: ACCOUNT_LINK
         amount: 1
         rewards:
-          - "p give %player% 100"
-          - "case give %player% donfree 2"
-          - "shadowci give %player% shar2"
+          - 'case give %player% donfree 1'
+          - 'shadowci give %player% shar2'
+          - 'eco give %player% 50'
+  2:
+    name: "Вызов"
+    quests:
+      1:
+        name: "Удача в казино"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBВыиграй в казино с любой ставкой"
+          - "&#F8BEFB&l┃ "
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &fКоин Кейс &f×1"
+          - "&#F8BEFB&l┃ &7● &fКоины &f×25"
+        icon: GOLD_INGOT
+        type: CASINO_WIN
+        amount: 1
+        rewards:
+          - 'case give %player% coins 1'
+          - 'eco give %player% 25'
+      2:
+        name: "Задание боевого пропуска"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBВыполни одно задание через /bp"
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &fБесплатный Кейс &f×1"
+          - "&#F8BEFB&l┃ &7● &fОпытная бутылочка &f×8"
+        icon: BOOK
+        type: BATTLEPASS_COMPLETE
+        amount: 1
+        rewards:
+          - 'case give %player% donfree 1'
+          - 'give %player% experience_bottle 8'
+      3:
+        name: "Морской маршрут"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBПроплыви 1500 блоков"
+          - "&#F8BEFB&l┃ &fТребуется именно плавание в воде"
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &fЗелье стремительности &f×2"
+          - "&#F8BEFB&l┃ &7● &fЭндер-жемчуг &f×4"
+        icon: TRIDENT
+        type: SWIM_DISTANCE
+        amount: 1500
+        rewards:
+          - 'give %player% splash_potion{Potion:"minecraft:swiftness"} 2'
+          - 'give %player% ender_pearl 4'
+      4:
+        name: "Свой спавнер"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBУстанови спавнер"
+          - "&#F8BEFB&l┃ &fПредмет: &#F8BEFBSpawner"
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &fАлмазная кирка &f(Эффективность IV)"
+          - "&#F8BEFB&l┃ &7● &fЗолотое яблоко &f×2"
+        icon: SPAWNER
+        type: PLACE_SPAWNER
+        amount: 1
+        rewards:
+          - 'give %player% diamond_pickaxe{Enchantments:[{id:"minecraft:efficiency",lvl:4s}]} 1'
+          - 'give %player% golden_apple 2'
+      5:
+        name: "Десять соперников"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBНанеси урон 10 разным игрокам"
+          - "&#F8BEFB&l┃ &fУбивать не нужно — важен прошедший урон"
+          - "&#F8BEFB&l┃ &fПовторные игроки не засчитываются"
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &fАлмазный меч &f(Острота III)"
+          - "&#F8BEFB&l┃ &7● &fСтрела &f×16"
+          - "&#F8BEFB&l┃ &7● &fКоины &f×50"
+        icon: DIAMOND_SWORD
+        type: COMBAT_PLAYER_UNIQUE
+        amount: 10
+        rewards:
+          - 'give %player% diamond_sword{Enchantments:[{id:"minecraft:sharpness",lvl:3s},{id:"minecraft:fire_aspect",lvl:1s}]} 1'
+          - 'give %player% arrow 16'
+          - 'eco give %player% 50'
+      6:
+        name: "Адский путь"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBПройди в аду 2500 блоков"
+          - "&#F8BEFB&l┃ &fСчитается перемещение в мире Nether"
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &fЗелье огнестойкости &f×2"
+          - "&#F8BEFB&l┃ &7● &fЭндер-жемчуг &f×4"
+        icon: NETHERRACK
+        type: NETHER_TRAVEL_DISTANCE
+        amount: 2500
+        rewards:
+          - 'give %player% potion{Potion:"minecraft:fire_resistance"} 2'
+          - 'give %player% ender_pearl 4'
+      7:
+        name: "Цветочная коллекция"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBСобери 8 разных видов цветов"
+          - "&#F8BEFB&l┃ &fВсе цветы должны находиться в инвентаре"
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &fАлмазный нагрудник &f(Защита III)"
+          - "&#F8BEFB&l┃ &7● &fЗолотое яблоко &f×1"
+        icon: OXEYE_DAISY
+        type: COLLECT_FLOWERS
+        amount: 8
+        rewards:
+          - 'give %player% diamond_chestplate{Enchantments:[{id:"minecraft:protection",lvl:3s}]} 1'
+          - 'give %player% golden_apple 1'
+      8:
+        name: "Торговец на аукционе"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBВыставь 5 предметов на аукционе"
+          - "&#F8BEFB&l┃ &fКоманда: &#F8BEFB/ah sell"
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &fЭндер-жемчуг &f×8"
+          - "&#F8BEFB&l┃ &7● &fИзумруд &f×2"
+          - "&#F8BEFB&l┃ &7● &fКоины &f×75"
+        icon: EMERALD
+        type: AUCTION_SELL
+        amount: 5
+        rewards:
+          - 'give %player% ender_pearl 8'
+          - 'give %player% emerald 2'
+          - 'eco give %player% 75'
+      9:
+        name: "Шлем Солнца"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBСкрафти шлем Солнца"
+          - "&#F8BEFB&l┃ &fСоедини алмазный или незеритовый шлем"
+          - "&#F8BEFB&l┃ &fс книгой «Солнечные оковы»"
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &fЗолотое яблоко &f×1"
+          - "&#F8BEFB&l┃ &7● &fАлмазный шлем &f(Защита III)"
+          - "&#F8BEFB&l┃ &7● &fЗелье силы &f×1"
+        icon: GOLDEN_HELMET
+        type: CRAFT_SUN_HELMET
+        amount: 1
+        rewards:
+          - 'give %player% golden_apple 1'
+          - 'give %player% diamond_helmet{Enchantments:[{id:"minecraft:protection",lvl:3s}]} 1'
+          - 'give %player% potion{Potion:"minecraft:strength"} 1'
+      10:
+        name: "Первый капитал"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBЗаработай 500 коинов"
+          - "&#F8BEFB&l┃ &fБаланс PlayerPoints: &#F8BEFB500 или больше"
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &fНезеритовая кирка &f(Эффективность V)"
+          - "&#F8BEFB&l┃ &7● &fКоин Кейс &f×1"
+          - "&#F8BEFB&l┃ &7● &fКоины &f×100"
+        icon: GOLD_NUGGET
+        type: MONEY_BALANCE
+        amount: 500
+        rewards:
+          - 'give %player% netherite_pickaxe{Enchantments:[{id:"minecraft:efficiency",lvl:5s}]} 1'
+          - 'case give %player% coins 1'
+          - 'eco give %player% 100'

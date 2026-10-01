@@ -47,7 +47,7 @@ public class PlayerDataDAO {
 
                     // Загрузка прогресса квестов
                     PreparedStatement ps = conn.prepareStatement(
-                            "SELECT level_id, quest_id, status, progress FROM quest_progress WHERE uuid=?");
+                            "SELECT level_id, quest_id, status, progress, cooldown_until FROM quest_progress WHERE uuid=?");
                     ps.setString(1, uuid.toString());
                     ResultSet rs = ps.executeQuery();
                     while (rs.next()) {
@@ -61,6 +61,7 @@ public class PlayerDataDAO {
                         }
                         int progress = rs.getInt("progress");
                         data.setEntry(level, quest, new QuestEntry(status, progress));
+                        data.setCooldownUntil(level, quest, rs.getLong("cooldown_until"));
                     }
                     rs.close();
                     ps.close();
@@ -86,6 +87,10 @@ public class PlayerDataDAO {
     }
 
     public void saveProgress(UUID uuid, int level, int quest, QuestStatus status, int progress) {
+        saveProgress(uuid, level, quest, status, progress, 0L);
+    }
+
+    public void saveProgress(UUID uuid, int level, int quest, QuestStatus status, int progress, long cooldownUntil) {
         if (!db.isConnected()) return;
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -93,13 +98,14 @@ public class PlayerDataDAO {
             synchronized (db) {
                 try {
                     PreparedStatement ps = conn.prepareStatement(
-                            "INSERT INTO quest_progress(uuid, level_id, quest_id, status, progress) VALUES(?,?,?,?,?) " +
-                                    "ON CONFLICT(uuid, level_id, quest_id) DO UPDATE SET status=excluded.status, progress=excluded.progress");
+                            "INSERT INTO quest_progress(uuid, level_id, quest_id, status, progress, cooldown_until) VALUES(?,?,?,?,?,?) " +
+                                    "ON CONFLICT(uuid, level_id, quest_id) DO UPDATE SET status=excluded.status, progress=excluded.progress, cooldown_until=excluded.cooldown_until");
                     ps.setString(1, uuid.toString());
                     ps.setInt(2, level);
                     ps.setInt(3, quest);
                     ps.setString(4, status.name());
                     ps.setInt(5, progress);
+                    ps.setLong(6, cooldownUntil);
                     ps.executeUpdate();
                     ps.close();
                 } catch (SQLException e) {

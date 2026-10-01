@@ -20,6 +20,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -96,6 +97,7 @@ public class QuestTrackingListener implements Listener {
                     q -> matchesTrigger(q.getStringData(), label), 1);
         }
 
+
         if (label.equals("warp") || label.equals("warps")) {
             qm().markAwaitingWarp(player);
         }
@@ -128,6 +130,21 @@ public class QuestTrackingListener implements Listener {
         Player player = (Player) e.getWhoClicked();
         if (e.getView() == null) return;
 
+        // Кастомный шлем Солнца создаётся наковальней: после забора результата
+        // книга исчезает, а готовый шлем появляется в инвентаре.
+        if (e.getRawSlot() == 2 && e.getView().getTopInventory() instanceof org.bukkit.inventory.AnvilInventory
+                && e.getCurrentItem() != null && e.getCurrentItem().getType() == Material.GOLDEN_HELMET
+                && hasSunText(e.getCurrentItem())) {
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
+                for (org.bukkit.inventory.ItemStack item : player.getInventory().getContents()) {
+                    if (item != null && item.getType() == Material.GOLDEN_HELMET && hasSunText(item)) {
+                        qm().incrementProgress(player, QuestType.CRAFT_SUN_HELMET, q -> true, 1);
+                        break;
+                    }
+                }
+            });
+        }
+
         String title = e.getView().getTitle().toLowerCase(Locale.ROOT);
         if (title.contains("кит") || title.contains("kit") || title.contains("набор")) {
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
@@ -137,6 +154,20 @@ public class QuestTrackingListener implements Listener {
                 }
             }, 10L);
         }
+    }
+
+    private boolean hasSunText(org.bukkit.inventory.ItemStack item) {
+        if (item == null || !item.hasItemMeta()) return false;
+        org.bukkit.inventory.meta.ItemMeta meta = item.getItemMeta();
+        String text = (meta.hasDisplayName() ? meta.getDisplayName() : "").toLowerCase(Locale.ROOT);
+        if (text.contains("солн") || text.contains("sun")) return true;
+        if (meta.hasLore() && meta.getLore() != null) {
+            for (String line : meta.getLore()) {
+                String lower = line.toLowerCase(Locale.ROOT);
+                if (lower.contains("солнеч") || lower.contains("sun shackles")) return true;
+            }
+        }
+        return false;
     }
 
     private boolean isKitCommand(String label, String fullLower) {
@@ -241,6 +272,9 @@ public class QuestTrackingListener implements Listener {
 
         if (attacker != null && !attacker.getUniqueId().equals(victim.getUniqueId())) {
             lastDamager.put(victim.getUniqueId(), attacker.getUniqueId());
+            if (e.getFinalDamage() > 0) {
+                qm().handleCombatHit(attacker, victim);
+            }
         }
     }
 
@@ -283,6 +317,9 @@ public class QuestTrackingListener implements Listener {
         Material mat = e.getBlock().getType();
         qm().incrementProgress(e.getPlayer(), QuestType.PLACE_BLOCK,
                 q -> q.getMaterial() == null || q.getMaterial() == mat, 1);
+        if (mat == Material.SPAWNER) {
+            qm().incrementProgress(e.getPlayer(), QuestType.PLACE_SPAWNER, q -> true, 1);
+        }
     }
 
     @EventHandler
@@ -294,6 +331,9 @@ public class QuestTrackingListener implements Listener {
         int amount = e.getRecipe().getResult().getAmount();
         qm().incrementProgress(p, QuestType.CRAFT_ITEM,
                 q -> q.getMaterial() == null || q.getMaterial() == mat, amount);
+        if (mat == Material.GOLDEN_HELMET) {
+            qm().incrementProgress(p, QuestType.CRAFT_SUN_HELMET, q -> true, amount);
+        }
     }
 
     @EventHandler
@@ -311,6 +351,25 @@ public class QuestTrackingListener implements Listener {
     @EventHandler
     public void onEnchant(EnchantItemEvent e) {
         qm().incrementProgress(e.getEnchanter(), QuestType.ENCHANT_ITEM, q -> true, 1);
+    }
+
+    @EventHandler
+    public void onSunHelmetAnvil(PrepareAnvilEvent e) {
+        if (!(e.getView().getPlayer() instanceof Player)) return;
+        if (e.getResult() == null || e.getResult().getType() != Material.GOLDEN_HELMET) return;
+        boolean sun = false;
+        if (e.getResult().hasItemMeta()) {
+            org.bukkit.inventory.meta.ItemMeta meta = e.getResult().getItemMeta();
+            String name = meta.hasDisplayName() ? meta.getDisplayName().toLowerCase(Locale.ROOT) : "";
+            sun = name.contains("солн") || name.contains("sun");
+            if (!sun && meta.hasLore() && meta.getLore() != null) {
+                for (String line : meta.getLore()) {
+                    String lower = line.toLowerCase(Locale.ROOT);
+                    if (lower.contains("солнеч") || lower.contains("sun shackles")) { sun = true; break; }
+                }
+            }
+        }
+        if (sun) qm().incrementProgress((Player) e.getView().getPlayer(), QuestType.CRAFT_SUN_HELMET, q -> true, 1);
     }
 
     @EventHandler
@@ -379,6 +438,7 @@ public class QuestTrackingListener implements Listener {
         int amount = e.getItem().getItemStack().getAmount();
         qm().incrementProgress(p, QuestType.ITEM_PICKUP,
                 q -> q.getMaterial() == null || q.getMaterial() == mat, amount);
+        plugin.getServer().getScheduler().runTask(plugin, () -> qm().updateFlowerCollection(p));
     }
 
     @EventHandler

@@ -26,6 +26,8 @@ no-permission: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBF
 
 # --- Уровни ---
 # уровень ещё закрыт (не пройден предыдущий)
+level-coming-soon: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &fЭтот уровень будет доступен в скором времени."
+
 level-locked: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cСначала пройдите предыдущий уровень!"
 
 # резерв: все задания уровня ещё не выполнены
@@ -41,6 +43,8 @@ level-unlocked: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECB
 # --- Задания ---
 # нельзя взять — не выполнено предыдущее задание уровня
 quest-locked-sequence: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cСначала выполните предыдущее задание!"
+
+quest-cooldown: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &fСледующее задание будет доступно через &#F8BEFB%time%&f."
 
 # задание взято в работу
 quest-activated: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aВы успешно взяли задание: &#F8BEFB%quest%"

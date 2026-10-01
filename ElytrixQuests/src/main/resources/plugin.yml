@@ -5,7 +5,7 @@ api-version: '1.16'
 authors: [rooyzee]
 description: Плагин на квесты
 website: https://elytrix.pw
-softdepend: [Vault, PlaceholderAPI, WorldGuard, WorldEdit, LuckPerms, PlayerKits, PlayerKits2]
+softdepend: [Vault, PlaceholderAPI, WorldGuard, WorldEdit, LuckPerms, PlayerKits, PlayerKits2, PlayerPoints, ElytrixBattlepass, bAuction]
 
 commands:
   elytrixquests:

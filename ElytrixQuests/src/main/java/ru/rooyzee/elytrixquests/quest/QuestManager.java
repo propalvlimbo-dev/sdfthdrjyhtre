@@ -35,6 +35,8 @@ public class QuestManager {
 
     private final Map<UUID, Long> awaitingWarpTeleport = new ConcurrentHashMap<>();
     private final Map<UUID, Map<String, Set<UUID>>> uniqueKills = new ConcurrentHashMap<>();
+    private final Map<UUID, Double> swimmingDistance = new ConcurrentHashMap<>();
+    private final Map<UUID, Double> netherDistance = new ConcurrentHashMap<>();
 
     private static final long WARP_TELEPORT_WINDOW_MS = 120_000L;
 
@@ -140,6 +142,8 @@ public class QuestManager {
         cache.remove(uuid);
         awaitingWarpTeleport.remove(uuid);
         uniqueKills.remove(uuid);
+        swimmingDistance.remove(uuid);
+        netherDistance.remove(uuid);
     }
 
     public void loadOnlinePlayers() {
@@ -205,7 +209,8 @@ public class QuestManager {
         QuestEntry prev = data.getEntry(levelId, prevId);
         if (prev == null) return false;
         QuestStatus st = prev.getStatus();
-        return st == QuestStatus.COMPLETED || st == QuestStatus.CLAIMED;
+        if (st != QuestStatus.COMPLETED && st != QuestStatus.CLAIMED) return false;
+        return System.currentTimeMillis() >= data.getCooldownUntil(levelId, prevId);
     }
 
     public int getCurrentLevel(PlayerQuestData data) {
@@ -257,7 +262,24 @@ public class QuestManager {
         }
 
         if (!isQuestUnlocked(data, levelId, questId)) {
-            player.sendMessage(plugin.getConfigManager().getMessage("quest-locked-sequence"));
+            QuestLevel currentLevel = levels.get(levelId);
+            int previousId = -1;
+            if (currentLevel != null) {
+                for (Integer id : currentLevel.getQuests().keySet()) if (id < questId && id > previousId) previousId = id;
+            }
+            if (previousId > 0) {
+                long remaining = getQuestCooldownRemaining(data, levelId, previousId);
+                if (remaining > 0) {
+                    long minutes = (remaining + 59999L) / 60000L;
+                    Map<String, String> cooldownPh = new HashMap<>();
+                    cooldownPh.put("time", minutes + " мин.");
+                    player.sendMessage(plugin.getConfigManager().getMessage("quest-cooldown", cooldownPh));
+                } else {
+                    player.sendMessage(plugin.getConfigManager().getMessage("quest-locked-sequence"));
+                }
+            } else {
+                player.sendMessage(plugin.getConfigManager().getMessage("quest-locked-sequence"));
+            }
             playSound(player, "level-locked");
             return;
         }
@@ -322,6 +344,9 @@ public class QuestManager {
 
                 plugin.getDao().saveProgress(player.getUniqueId(), levelId, questId,
                         entry.getStatus(), entry.getProgress());
+                if (quest.getType() == QuestType.COLLECT_FLOWERS) {
+                    updateFlowerCollection(player);
+                }
                 break;
             }
             case IN_PROGRESS: {
@@ -500,8 +525,10 @@ public class QuestManager {
     private void markCompleted(Player player, PlayerQuestData data, int levelId, Quest quest, QuestEntry entry) {
         entry.setStatus(QuestStatus.COMPLETED);
         entry.setProgress(quest.getAmount());
+        long cooldownUntil = System.currentTimeMillis() + 5L * 60L * 1000L;
+        data.setCooldownUntil(levelId, quest.getId(), cooldownUntil);
         plugin.getDao().saveProgress(player.getUniqueId(), levelId, quest.getId(),
-                entry.getStatus(), entry.getProgress());
+                entry.getStatus(), entry.getProgress(), cooldownUntil);
 
         Map<String, String> ph = new HashMap<>();
         ph.put("quest", ColorUtils.colorize(quest.getName()));
@@ -519,7 +546,7 @@ public class QuestManager {
         playSound(player, "reward-claimed");
 
         plugin.getDao().saveProgress(player.getUniqueId(), level.getId(), quest.getId(),
-                entry.getStatus(), entry.getProgress());
+                entry.getStatus(), entry.getProgress(), data.getCooldownUntil(level.getId(), quest.getId()));
 
         if (isLevelFullyClaimedExceptMega(data, level.getId()) && !data.isMegaClaimed(level.getId())) {
             data.setMegaClaimed(level.getId(), true);
@@ -566,13 +593,16 @@ public class QuestManager {
                 int newProgress = Math.min(entry.getProgress() + amountToAdd, quest.getAmount());
                 entry.setProgress(newProgress);
 
+                long cooldownUntil = 0L;
                 if (newProgress >= quest.getAmount()) {
                     entry.setStatus(QuestStatus.COMPLETED);
+                    cooldownUntil = System.currentTimeMillis() + 5L * 60L * 1000L;
+                    data.setCooldownUntil(level.getId(), quest.getId(), cooldownUntil);
                     notifyReady(player);
                 }
 
                 plugin.getDao().saveProgress(player.getUniqueId(), level.getId(), quest.getId(),
-                        entry.getStatus(), entry.getProgress());
+                        entry.getStatus(), entry.getProgress(), cooldownUntil);
             }
         }
     }
@@ -593,13 +623,16 @@ public class QuestManager {
                 int newProgress = Math.min(Math.max(value, entry.getProgress()), quest.getAmount());
                 entry.setProgress(newProgress);
 
+                long cooldownUntil = 0L;
                 if (newProgress >= quest.getAmount()) {
                     entry.setStatus(QuestStatus.COMPLETED);
+                    cooldownUntil = System.currentTimeMillis() + 5L * 60L * 1000L;
+                    data.setCooldownUntil(level.getId(), quest.getId(), cooldownUntil);
                     notifyReady(player);
                 }
 
                 plugin.getDao().saveProgress(player.getUniqueId(), level.getId(), quest.getId(),
-                        entry.getStatus(), entry.getProgress());
+                        entry.getStatus(), entry.getProgress(), cooldownUntil);
             }
         }
     }
@@ -607,6 +640,15 @@ public class QuestManager {
     private void notifyReady(Player player) {
         player.sendMessage(plugin.getConfigManager().getMessage("quest-ready"));
         playSound(player, "quest-ready");
+    }
+
+    public void addDistanceProgress(Player player, QuestType type, double distance) {
+        if (distance <= 0) return;
+        Map<UUID, Double> values = type == QuestType.SWIM_DISTANCE ? swimmingDistance : netherDistance;
+        double total = values.getOrDefault(player.getUniqueId(), 0.0D) + distance;
+        int whole = (int) total;
+        values.put(player.getUniqueId(), total - whole);
+        if (whole > 0) incrementProgress(player, type, q -> true, whole);
     }
 
     public void markAwaitingWarp(Player player) {
@@ -748,6 +790,36 @@ public class QuestManager {
         return null;
     }
 
+    /** Counts successful combat hits against different players, not kills. */
+    public void handleCombatHit(Player attacker, Player victim) {
+        if (attacker == null || victim == null || attacker.getUniqueId().equals(victim.getUniqueId())) return;
+        PlayerQuestData data = cache.get(attacker.getUniqueId());
+        if (data == null) return;
+        for (QuestLevel level : levels.values()) {
+            if (!isLevelUnlocked(data, level.getId())) continue;
+            for (Quest quest : level.getQuests().values()) {
+                if (quest.getType() != QuestType.COMBAT_PLAYER_UNIQUE || !isQuestUnlocked(data, level.getId(), quest.getId())) continue;
+                QuestEntry entry = data.getEntry(level.getId(), quest.getId());
+                if (entry == null || entry.getStatus() != QuestStatus.IN_PROGRESS) continue;
+                String key = "combat:" + level.getId() + ":" + quest.getId();
+                Set<UUID> set = uniqueKills.computeIfAbsent(attacker.getUniqueId(), u -> new ConcurrentHashMap<>())
+                        .computeIfAbsent(key, k -> ConcurrentHashMap.newKeySet());
+                if (!set.add(victim.getUniqueId())) continue;
+                int value = Math.min(set.size(), quest.getAmount());
+                entry.setProgress(value);
+                long cooldownUntil = 0L;
+                if (value >= quest.getAmount()) {
+                    entry.setStatus(QuestStatus.COMPLETED);
+                    cooldownUntil = System.currentTimeMillis() + 5L * 60L * 1000L;
+                    data.setCooldownUntil(level.getId(), quest.getId(), cooldownUntil);
+                    notifyReady(attacker);
+                }
+                plugin.getDao().saveProgress(attacker.getUniqueId(), level.getId(), quest.getId(),
+                        entry.getStatus(), entry.getProgress(), cooldownUntil);
+            }
+        }
+    }
+
     public void handleUniquePlayerKill(Player killer, Player victim) {
         if (killer == null || victim == null) return;
         if (killer.getUniqueId().equals(victim.getUniqueId())) return;
@@ -783,15 +855,93 @@ public class QuestManager {
                 int newProgress = Math.min(set.size(), quest.getAmount());
                 entry.setProgress(newProgress);
 
+                long cooldownUntil = 0L;
                 if (newProgress >= quest.getAmount()) {
                     entry.setStatus(QuestStatus.COMPLETED);
+                    cooldownUntil = System.currentTimeMillis() + 5L * 60L * 1000L;
+                    data.setCooldownUntil(level.getId(), quest.getId(), cooldownUntil);
                     notifyReady(killer);
                 }
 
                 plugin.getDao().saveProgress(killer.getUniqueId(), level.getId(), quest.getId(),
-                        entry.getStatus(), entry.getProgress());
+                        entry.getStatus(), entry.getProgress(), cooldownUntil);
             }
         }
+    }
+
+    public long getQuestCooldownRemaining(PlayerQuestData data, int levelId, int questId) {
+        return Math.max(0L, data.getCooldownUntil(levelId, questId) - System.currentTimeMillis());
+    }
+
+    /** Баланс PlayerPoints для задания накопления коинов. */
+    public int getPlayerPointsBalance(Player player) {
+        try {
+            Object playerPoints = Bukkit.getPluginManager().getPlugin("PlayerPoints");
+            if (playerPoints == null) return -1;
+            Object api = playerPoints.getClass().getMethod("getAPI").invoke(playerPoints);
+            try {
+                Object result = api.getClass().getMethod("look", UUID.class).invoke(api, player.getUniqueId());
+                if (result instanceof Number) return ((Number) result).intValue();
+            } catch (Throwable ignored) {
+                try {
+                    Object result = api.getClass().getMethod("look", String.class).invoke(api, player.getName());
+                    if (result instanceof Number) return ((Number) result).intValue();
+                } catch (Throwable ignoredByName) {
+                    return -1;
+                }
+            }
+            return -1;
+        } catch (Throwable ignored) {
+            return -1;
+        }
+    }
+
+    public boolean hasSunShacklesBook(Player player) {
+        for (org.bukkit.inventory.ItemStack item : player.getInventory().getContents()) {
+            if (item == null || !item.hasItemMeta()) continue;
+            org.bukkit.inventory.meta.ItemMeta meta = item.getItemMeta();
+            String text = (meta.hasDisplayName() ? meta.getDisplayName() : "").toLowerCase(Locale.ROOT);
+            if (text.contains("солнеч") || text.contains("sun shackles")) return true;
+            if (meta.hasLore() && meta.getLore() != null) {
+                for (String line : meta.getLore()) {
+                    String lower = line.toLowerCase(Locale.ROOT);
+                    if (lower.contains("солнеч") || lower.contains("sun shackles")) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean hasSunHelmet(Player player) {
+        for (org.bukkit.inventory.ItemStack item : player.getInventory().getContents()) {
+            if (item == null || item.getType() != Material.GOLDEN_HELMET || !item.hasItemMeta()) continue;
+            org.bukkit.inventory.meta.ItemMeta meta = item.getItemMeta();
+            String text = (meta.hasDisplayName() ? meta.getDisplayName() : "").toLowerCase(Locale.ROOT);
+            if (text.contains("солн") || text.contains("sun")) return true;
+            if (meta.hasLore() && meta.getLore() != null) {
+                for (String line : meta.getLore()) {
+                    String lower = line.toLowerCase(Locale.ROOT);
+                    if (lower.contains("солнеч") || lower.contains("sun shackles")) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void updateFlowerCollection(Player player) {
+        PlayerQuestData data = cache.get(player.getUniqueId());
+        if (data == null) return;
+        final Set<Material> flowers = ConcurrentHashMap.newKeySet();
+        Material[] types = {Material.DANDELION, Material.POPPY, Material.BLUE_ORCHID,
+                Material.ALLIUM, Material.AZURE_BLUET, Material.RED_TULIP, Material.ORANGE_TULIP,
+                Material.WHITE_TULIP, Material.PINK_TULIP, Material.OXEYE_DAISY,
+                Material.CORNFLOWER, Material.LILY_OF_THE_VALLEY, Material.SUNFLOWER,
+                Material.LILAC, Material.ROSE_BUSH, Material.PEONY};
+        for (org.bukkit.inventory.ItemStack item : player.getInventory().getContents()) {
+            if (item == null) continue;
+            for (Material flower : types) if (item.getType() == flower) flowers.add(flower);
+        }
+        setProgressAbsolute(player, QuestType.COLLECT_FLOWERS, q -> true, flowers.size());
     }
 
     public void resetPlayer(UUID uuid) {

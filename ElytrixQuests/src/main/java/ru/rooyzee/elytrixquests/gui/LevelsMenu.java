@@ -77,6 +77,15 @@ public class LevelsMenu implements InventoryHolder {
                 continue;
             }
 
+            if (level == null) {
+                inventory.setItem(LEVEL_SLOTS[levelIndex], new ItemBuilder(Material.CLOCK)
+                        .name("&7« &#F8BEFBУровень " + levelId + " &7»")
+                        .lore("&#F8BEFB&l┃ ", "&#F8BEFB&l┃ &fВ скором времени")
+                        .build());
+                levelIndex++;
+                continue;
+            }
+
             boolean unlocked = plugin.getQuestManager().isLevelUnlocked(data, levelId);
             boolean completed = plugin.getQuestManager().isLevelFullyClaimed(data, levelId);
 

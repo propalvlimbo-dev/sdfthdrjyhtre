@@ -9,6 +9,7 @@ public class PlayerQuestData {
     private final UUID uuid;
     private final Map<Long, QuestEntry> entries = new ConcurrentHashMap<>();
     private final Map<Integer, Boolean> megaClaimed = new ConcurrentHashMap<>();
+    private final Map<Long, Long> cooldowns = new ConcurrentHashMap<>();
 
     public PlayerQuestData(UUID uuid) {
         this.uuid = uuid;
@@ -36,6 +37,15 @@ public class PlayerQuestData {
 
     public void setMegaClaimed(int level, boolean value) {
         megaClaimed.put(level, value);
+    }
+
+    public long getCooldownUntil(int level, int quest) {
+        return cooldowns.getOrDefault(key(level, quest), 0L);
+    }
+
+    public void setCooldownUntil(int level, int quest, long until) {
+        if (until > 0) cooldowns.put(key(level, quest), until);
+        else cooldowns.remove(key(level, quest));
     }
 
     public UUID getUuid() {

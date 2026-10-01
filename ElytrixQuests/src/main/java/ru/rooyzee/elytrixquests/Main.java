@@ -2,6 +2,9 @@ package ru.rooyzee.elytrixquests;
 
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.rooyzee.elytrixquests.command.ElytrixQuestsCommand;
 import ru.rooyzee.elytrixquests.config.ConfigManager;
@@ -100,6 +103,34 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new PlayerQuitListener(this), this);
         pm.registerEvents(new QuestTrackingListener(this), this);
         pm.registerEvents(new GuiListener(this), this);
+        registerBAuctionSellEvent(pm);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void registerBAuctionSellEvent(PluginManager pm) {
+        try {
+            Class<?> raw = Class.forName("org.by1337.bauction.api.event.EventSellItem");
+            if (!Event.class.isAssignableFrom(raw)) return;
+            Class<? extends Event> eventClass = (Class<? extends Event>) raw;
+            Listener listener = new Listener() {};
+            pm.registerEvent(eventClass, listener, EventPriority.MONITOR, (ignored, event) -> {
+                try {
+                    Object auctionUser = event.getClass().getMethod("getUser").invoke(event);
+                    Object uuid = auctionUser.getClass().getMethod("getUuid").invoke(auctionUser);
+                    if (uuid instanceof java.util.UUID) {
+                        org.bukkit.entity.Player player = getServer().getPlayer((java.util.UUID) uuid);
+                        if (player != null) questManager.incrementProgress(player, ru.rooyzee.elytrixquests.quest.QuestType.AUCTION_SELL, q -> true, 1);
+                    }
+                } catch (Throwable ignoredError) {
+                    // Версия BAuction без совместимого API.
+                }
+            }, this);
+            getLogger().info("Подключено событие успешной продажи BAuction.");
+        } catch (ClassNotFoundException ignored) {
+            // BAuction не установлен.
+        } catch (Throwable t) {
+            getLogger().warning("Не удалось подключить событие BAuction: " + t.getMessage());
+        }
     }
 
     private void registerCommand() {

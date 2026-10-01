@@ -90,13 +90,16 @@ public class GuiListener implements Listener {
             return;
         }
 
+        QuestLevel level = plugin.getQuestManager().getLevel(levelId);
+        if (level == null) {
+            player.sendMessage(plugin.getConfigManager().getMessage("level-coming-soon"));
+            return;
+        }
+
         if (!plugin.getQuestManager().isLevelUnlocked(data, levelId)) {
             player.sendMessage(plugin.getConfigManager().getMessage("level-locked"));
             return;
         }
-
-        QuestLevel level = plugin.getQuestManager().getLevel(levelId);
-        if (level == null) return;
 
         plugin.getGuiManager().openLevelMenu(player, levelId);
     }

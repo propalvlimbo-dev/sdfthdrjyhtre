@@ -1,0 +1,43 @@
+# =============================================================
+# ElytrixQuests — плагин квестов (игровой сервер)
+#
+#  • config.yml    — этот файл: настройки проверок и звуков
+#  • quests.yml    — уровни и задания (что даём, за что)
+#  • messages.yml  — все сообщения в чате
+#
+# Цвета: &-коды (коды Bukkit) и градиенты &#RRGGBB.
+# =============================================================
+
+
+# --- Квест «Привязка аккаунта» (ACCOUNT_LINK) ---
+# Проверка «привязан ли игрок к Telegram» через HTTP API ElytrixAuth (ПРОКСИ),
+# как в ElytrixFree:
+#   url = http://<api.bind>:<api.port> из config.properties ElytrixAuth на прокси
+#         (по умолчанию api.bind=0.0.0.0, api.port=8754)
+#   key = api.secret оттуда же
+#   poll-seconds — как часто проверять привязку у игроков с активным заданием.
+#
+# Режимы:
+#   enabled: true + url/key заполнены  — живая проверка: задание засчитывается
+#         автоматически после /addtg (или сразу, если аккаунт уже привязан);
+#   enabled: true + key = CHANGE_ME     — проверка ждёт настройки: задание НЕ
+#         засчитывается, в консоль пишется warning. Сделано так, чтобы после
+#         установки/обновления плагина награда случайно не выдалась без привязки;
+#   enabled: false                      — ElytrixAuth на сети нет: проверки нет,
+#         задание «Привязка аккаунта» засчитывается сразу по клику.
+auth:
+  http:
+    enabled: true
+    url: 'http://127.0.0.1:8754'
+    key: 'CHANGE_ME'
+    poll-seconds: 15
+
+
+# --- Звуки событий ---
+# Названия — звуки Minecraft 1.16+. Пустая строка ('') отключает звук.
+sounds:
+  quest-activated: ENTITY_EXPERIENCE_ORB_PICKUP
+  quest-ready: ENTITY_PLAYER_LEVELUP
+  reward-claimed: ENTITY_PLAYER_LEVELUP
+  level-completed: UI_TOAST_CHALLENGE_COMPLETE
+  level-locked: ENTITY_VILLAGER_NO

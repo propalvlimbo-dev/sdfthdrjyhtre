@@ -1,0 +1,18 @@
+name: ElytrixQuests
+version: '1.0.0'
+main: ru.rooyzee.elytrixquests.Main
+api-version: '1.16'
+authors: [rooyzee]
+description: Плагин на квесты
+website: https://elytrix.pw
+softdepend: [Vault, PlaceholderAPI, WorldGuard, WorldEdit, LuckPerms, PlayerKits, PlayerKits2]
+
+commands:
+  elytrixquests:
+    description: Основная команда плагина ElytrixQuests
+    aliases: [eq, quests, quest, квест, квесты]
+
+permissions:
+  elytrixquests.admin:
+    description: Доступ к админ-командам ElytrixQuests
+    default: op

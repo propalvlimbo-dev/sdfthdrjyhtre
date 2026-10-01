@@ -1,0 +1,230 @@
+# =============================================================
+# quests.yml — уровни и задания ElytrixQuests
+#
+# Структура:
+#   levels:
+#     <номер уровня>:
+#       name: "Название уровня"          — титул в меню
+#       mega-reward:                     — награда за ПРОХОЖДЕНИЕ уровня
+#         commands:                      —   (выдаётся после забора награды
+#           - "консольная команда"       --    последнего задания уровня)
+#         message: "..."                 —   резерв (в код не выводится)
+#       quests:
+#         <номер задания>:
+#           name: "Название"
+#           lore:                        — строки описания в меню
+#             - "&#F8BEFB&l┃ &f..."
+#           icon: PAPER                  — материал иконки в меню
+#           type: COMMAND_TRIGGER        — тип выполнения (см. ниже)
+#           amount: 1                    — сколько раз нужно выполнить
+#           trigger/region/kit/...       — параметр типа (см. ниже)
+#           rewards:                     — команды КОНСОЛИ за награду
+#             - "p give %player% 50"
+#
+# В командах наград доступны: %player% (ник) и %uuid% (UUID игрока);
+# если стоит PlaceholderAPI — работают и его плейсхолдеры.
+#
+# Команды наград (как в ElytrixFree /free):
+#   p give <ник> <кол-во>             — коины (прямая выдача)
+#   case give <ник> donfree <N>       — N шт. «Бесплатный Кейс»
+#   case give <ник> coins <N>         — N шт. «Коин Кейс»
+#   shadowci give <ник> shar2         — «Шар Змеи»
+#   shadowci give <ник> shar3         — «Шар Солнца»
+#   elytrixitem:ei give <ник> <id> <кол-во> — кастомный предмет Elytrix
+#                       (enchant_sun_shackles — книга «Солнечные оковы»)
+#   kit give <имя> <ник>              — кит (immortal / dragon / elder)
+#   give <ник> <предмет> <кол-во>     — ванильный предмет
+#
+# Типы заданий (type):
+#   MANUAL_CLICK         — засчитывается сразу по клику в меню
+#   COMMAND_TRIGGER      — ввод команды; trigger: "метка" (через запятую
+#                          несколько). Метка = первое слово команды без «/»
+#                          и без префикса плагина (:). Пример: trigger: "help"
+#                          ловит и /help, и /server:help
+#   WARP_TELEPORT        — /warp или /warps открывает окно на 2 минуты;
+#                          засчитывается при следующей телепортации
+#   REGION_CLAIM         — создание привата (/rg claim или /region create);
+#                          засчитывается, если регион реально появился
+#   KILL_PLAYER_UNIQUE   — убийства РАЗНЫХ игроков; region: "pvp" — считать
+#                          только убийства, где убийца ИЛИ жертва в регионе
+#   USE_TOTEM            — срабатывание тотема
+#   DONATE_RECEIVE       — выдача доната игроку (команда lp user X parent
+#                          add/set ... из консоли; ловится по паттерну)
+#   KIT_CLAIM            — получение донат-кита; kit: "имя_кита" (опционально;
+#                          без kit — любой кит игрока)
+#   ACCOUNT_LINK         — «Привязка аккаунта»: привязка к Telegram.
+#                          Проверка — auth.http в config.yml (HTTP API
+#                          ElytrixAuth). Засчитывается автоматически после
+#                          /addtg, либо сразу по клику, если уже привязан;
+#                          при auth.http.enabled: false — сразу (без ElytrixAuth)
+#
+# Дополнительно есть типы: BREAK_BLOCK / PLACE_BLOCK (material: STONE),
+#   CRAFT_ITEM / SMELT_ITEM / CONSUME_ITEM / ITEM_PICKUP (material — опционально),
+#   KILL_MOB / TAME_ANIMAL (entity: ZOMBIE), KILL_PLAYER, BREED_ANIMAL,
+#   SHEAR_SHEEP, FISH_ITEM, ENCHANT_ITEM, CHAT_MESSAGE, DEATH,
+#   LEVEL_UP (текущий уровень), TRAVEL_DISTANCE (метров), PLAYTIME, JOIN_SERVER,
+#   ADVANCEMENT (advancement: "minecraft:story/mine_stone"),
+#   POTION_EFFECT (potion: "SPEED"), MONEY_BALANCE (баланс Vault).
+#
+# Параметр квеста читается из ПЕРВОГО найденного ключа:
+#   trigger | region | value | advancement | message | potion | kit
+# =============================================================
+
+levels:
+  1:
+    name: "Знакомства"
+    mega-reward:
+      commands:
+        - "case give %player% coins 2"
+        - "kit give elder %player%"
+      message: "&aПолучена Мега-награда за уровень Знакомства!"
+    quests:
+      1:
+        name: "Изучи меню помощи"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBОткрой /помощь"
+          - "&#F8BEFB&l┃ &fЦель: &#F8BEFBУзнать основы сервера"
+          - "&#F8BEFB&l┃ "
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &#F8BEFB50 Коинов"
+        icon: PAPER
+        type: COMMAND_TRIGGER
+        trigger: "помощь"
+        amount: 1
+        rewards:
+          - "p give %player% 50"
+      2:
+        name: "Запривать территорию"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBСоздай свой первый приват"
+          - "&#F8BEFB&l┃ &fКоманда: &#F8BEFB/rg claim [название]"
+          - "&#F8BEFB&l┃ "
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &fКоинов &#F8BEFB50"
+          - "&#F8BEFB&l┃ &7● &#F8BEFBБесплатный Кейс &f×1"
+        icon: WOODEN_AXE
+        type: REGION_CLAIM
+        amount: 1
+        rewards:
+          - "p give %player% 50"
+          - "case give %player% donfree 1"
+      3:
+        name: "Создай свой дом"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBУстанови точку дома"
+          - "&#F8BEFB&l┃ &fКоманда: &#F8BEFB/sethome [название]"
+          - "&#F8BEFB&l┃ "
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &fКоинов &#F8BEFB70"
+        icon: RED_BED
+        type: COMMAND_TRIGGER
+        trigger: "sethome"
+        amount: 1
+        rewards:
+          - "p give %player% 70"
+      4:
+        name: "Пригласи в дом"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBПригласи игрока в дом"
+          - "&#F8BEFB&l┃ &fКоманда: &#F8BEFB/invitehome <игрок> <дом>"
+          - "&#F8BEFB&l┃ "
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &fКоинов &#F8BEFB70"
+        icon: OAK_DOOR
+        type: COMMAND_TRIGGER
+        trigger: "invitehome"
+        amount: 1
+        rewards:
+          - "p give %player% 70"
+      5:
+        name: "Посети варп"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBТелепортируйся на любой варп"
+          - "&#F8BEFB&l┃ &fКоманда: &#F8BEFB/warp"
+          - "&#F8BEFB&l┃ "
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &fКоинов &#F8BEFB70"
+        icon: ENDER_PEARL
+        type: WARP_TELEPORT
+        amount: 1
+        rewards:
+          - "p give %player% 70"
+      6:
+        name: "Бесплатный донат"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBПолучи кейс из /free"
+          - "&#F8BEFB&l┃ &fГде: &#F8BEFBБесплатный кейс"
+          - "&#F8BEFB&l┃ "
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &#F8BEFBШар Новичка &f×1"
+          - "&#F8BEFB&l┃ &7● &#F8BEFBКоин Кейс &f×1"
+        icon: CHEST
+        type: DONATE_RECEIVE
+        amount: 1
+        rewards:
+          - "shadowci give %player% shar1"
+          - "case give %player% coins 1"
+      7:
+        name: "Кит привилегии"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBПолучи кит своего доната"
+          - "&#F8BEFB&l┃ &fЕсли кит на КД: &#F8BEFBЗачтётся автоматически"
+          - "&#F8BEFB&l┃ "
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &#F8BEFBКоин Кейс &f×1"
+        icon: IRON_SWORD
+        type: KIT_CLAIM
+        amount: 1
+        rewards:
+          - "case give %player% coins 1"
+      8:
+        name: "PvP на арене"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBУбей 3 разных игроков"
+          - "&#F8BEFB&l┃ &fГде: &#F8BEFB/warp pvp"
+          - "&#F8BEFB&l┃ &fПовторные убийства: &#F8BEFBНе засчитываются"
+          - "&#F8BEFB&l┃ "
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &fКоинов &#F8BEFB70"
+          - "&#F8BEFB&l┃ &7● &#F8BEFBШар Змеи &f×1"
+        icon: DIAMOND_SWORD
+        type: KILL_PLAYER_UNIQUE
+        region: "pvp"
+        amount: 3
+        rewards:
+          - "p give %player% 70"
+          - "shadowci give %player% shar2"
+      9:
+        name: "Тотем бессмертия"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBИспользуй тотем 6 раз"
+          - "&#F8BEFB&l┃ &fПредмет: &#F8BEFBTotem of Undying"
+          - "&#F8BEFB&l┃ "
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &#F8BEFBКоин Кейс &f×2"
+          - "&#F8BEFB&l┃ &7● &fКнига &7«&6Солнечные оковы&7» &f×1"
+        icon: TOTEM_OF_UNDYING
+        type: USE_TOTEM
+        amount: 6
+        rewards:
+          - "case give %player% coins 2"
+          - "elytrixitem:ei give %player% enchant_sun_shackles 1"
+      10:
+        name: "Привязка аккаунта"
+        lore:
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBПривяжи аккаунт к Telegram"
+          - "&#F8BEFB&l┃ &fКак: &#F8BEFBнапиши в чате /addtg и подтверди в боте"
+          - "&#F8BEFB&l┃ &fЗачтётся: &#F8BEFBавтоматически после привязки"
+          - "&#F8BEFB&l┃ &fУже привязан: &#F8BEFBвыполнится сразу по клику"
+          - "&#F8BEFB&l┃ "
+          - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &7● &fКоинов &#F8BEFB100"
+          - "&#F8BEFB&l┃ &7● &#F8BEFBБесплатный Кейс &f×2"
+          - "&#F8BEFB&l┃ &7● &#F8BEFBШар Змеи &f×1"
+        icon: NAME_TAG
+        type: ACCOUNT_LINK
+        amount: 1
+        rewards:
+          - "p give %player% 100"
+          - "case give %player% donfree 2"
+          - "shadowci give %player% shar2"

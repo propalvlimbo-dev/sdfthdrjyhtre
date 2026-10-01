@@ -1,0 +1,81 @@
+# =============================================================
+# messages.yml — все сообщения ElytrixQuests (в чат)
+#
+# Плейсхолдеры:
+#   %quest%     — название задания
+#   %progress%  — прогресс задания (например, 2/6)
+#   %level%     — название уровня
+#
+# Цвета: &-коды и градиенты &#RRGGBB. Строка = одно сообщение.
+#
+# При обновлении плагина недостающие ключи дописываются в конец
+# файла автоматически (твои правки не трогаются).
+# =============================================================
+
+
+# --- Ошибки / системные ---
+# данные игрока ещё грузятся из БД
+data-loading: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cВаши данные ещё загружаются, подождите немного..."
+
+# квест не найден (неверный id)
+unknown-quest: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cТакой квест не найден."
+
+# нет прав (админ-команды)
+no-permission: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cУ вас нет прав на использование этой команды."
+
+
+# --- Уровни ---
+# уровень ещё закрыт (не пройден предыдущий)
+level-locked: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cСначала пройдите предыдущий уровень!"
+
+# резерв: все задания уровня ещё не выполнены
+level-not-complete: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cСначала выполните все задания этого уровня!"
+
+# уровень полностью пройден, выдана мега-награда
+level-completed: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aВы полностью прошли уровень &#F8BEFB%level%&a! Получена Мега-награда!"
+
+# открыт следующий уровень
+level-unlocked: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &fОткрыт новый уровень: &#F8BEFB%level%"
+
+
+# --- Задания ---
+# нельзя взять — не выполнено предыдущее задание уровня
+quest-locked-sequence: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cСначала выполните предыдущее задание!"
+
+# задание взято в работу
+quest-activated: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aВы успешно взяли задание: &#F8BEFB%quest%"
+
+# задание в процессе (клик по нему)
+quest-in-progress: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &fВыполните задание: &#F8BEFB%quest% &7(%progress%)"
+
+# выполнено мгновенно (клик по «ручным» заданиям и автозаданиям)
+quest-completed: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aЗадание выполнено! Нажмите ещё раз в меню, чтобы забрать награду."
+
+# прогресс докачан до конца (нужно зайти в меню и забрать награду)
+quest-ready: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &a✔ Задание выполнено! Зайдите в меню квестов, чтобы забрать награду."
+
+# игрок НЕ привязан (живая проверка это подтвердила): как выполнить задание
+# (ключ назван по-новому, чтобы на серверах со старым messages.yml плагин
+# автодописал этот текст в конец файла — см. шапку этого файла)
+quest-account-link-not-linked: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &fЗадание &#F8BEFB%quest%&f: аккаунт ещё не привязан. Напиши в чате &#F8BEFB/addtg&f, подтверди в боте, затем кликни задание ещё раз — оно сразу зачтётся."
+
+# задание ACCOUNT_LINK, но проверка привязки не настроена (auth.http.key = CHANGE_ME)
+quest-account-link-not-ready: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &fЗадание &#F8BEFB%quest% &cвременно недоступно — проверка привязки не настроена. Сообщи администратору."
+
+# задание ACCOUNT_LINK: не удалось достучаться до API ElytrixAuth
+quest-account-link-check-failed: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cНе удалось проверить привязку аккаунта. Попробуй ещё раз через пару секунд."
+
+# награда уже забрана
+quest-already-claimed: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cНаграда за это задание уже была получена."
+
+# награда выдана
+reward-claimed: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &a✔ Вы успешно получили награду за задание &#F8BEFB%quest%"
+
+
+# --- Статусы заданий (в меню) ---
+status:
+  locked: "&cЗаблокировано"
+  available: "&#F8BEFBДоступно"
+  in_progress: "&eВ процессе"
+  completed: "&aГотово к получению"
+  claimed: "&2Получено"

@@ -55,7 +55,11 @@ public class DatabaseManager {
                     "quest_id INTEGER, " +
                     "status TEXT, " +
                     "progress INTEGER, " +
+                    "cooldown_until INTEGER DEFAULT 0, " +
                     "PRIMARY KEY(uuid, level_id, quest_id))");
+
+            try { st.executeUpdate("ALTER TABLE quest_progress ADD COLUMN cooldown_until INTEGER DEFAULT 0"); }
+            catch (SQLException ignored) { /* колонка уже существует */ }
 
             st.executeUpdate("CREATE TABLE IF NOT EXISTS level_data (" +
                     "uuid TEXT, " +

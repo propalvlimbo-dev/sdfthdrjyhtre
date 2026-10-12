@@ -29,7 +29,7 @@ auth:
   http:
     enabled: true
     url: 'http://127.0.0.1:8754'
-    key: 'CHANGE_ME'
+    key: '7a1ccae78d60cbf5b5ae48ef3ec04f49a757fb05f9a2630a'
     poll-seconds: 15
 
 

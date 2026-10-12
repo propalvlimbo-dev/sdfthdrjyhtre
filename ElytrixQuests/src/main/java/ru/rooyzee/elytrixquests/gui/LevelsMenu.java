@@ -30,6 +30,13 @@ public class LevelsMenu implements InventoryHolder {
             Material.NETHER_STAR
     };
 
+    private static final String[] LEVEL_TEXTURES = {
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTg4YmNlNDk3Y2ZhNWY2MTE4MzlmNmRhMjFjOTVkMzRlM2U3MjNjMmNjNGMzYzMxOWI1NjI3NzNkMTIxNiJ9fX0=",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjNlZWI0NDA0YTIyZTNjNWZiZGQ0ODM2YzcyYTdmNTljMTYxNTU4OGE5YzU3ZDI4NzE1NTQ1MzcyOGFlYSJ9fX0=",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWM3ZjdiNzJmYzNlNzMzODI4ZmNjY2MwY2E4Mjc4YWNhMjYzM2FhMzNhMjMxYzkzYTY4MmQxNGFjNTRhYTBjNCJ9fX0=",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzRhNWRiOGVhNzk3N2M3Zjk2YTY4ZGZlMWZhNDliNjZlYWZiZWNkMzgxMWE2YjZkM2QxNzdkZGE1Zjk0MjMxMyJ9fX0="
+    };
+
     // Точный массив из твоего меню
     private static final int[] BLACK_SLOTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 17, 18, 26};
     private static final int[] PURPLE_SLOTS = {27, 35, 36, 37, 43, 44, 45, 46, 47, 48, 50, 51, 52, 53};
@@ -43,6 +50,22 @@ public class LevelsMenu implements InventoryHolder {
     public void open() {
         build();
         player.openInventory(inventory);
+        animateOpening();
+    }
+
+    private void animateOpening() {
+        final int[] slots = {21, 22, 23, 31};
+        for (int i = 0; i < slots.length; i++) {
+            final int step = i;
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                if (!player.isOnline() || player.getOpenInventory().getTopInventory() != inventory) return;
+                build();
+                for (int j = step + 1; j < slots.length; j++) {
+                    inventory.setItem(slots[j], new ItemBuilder(Material.CLOCK)
+                            .name("&7« &eЗагрузка... &7»").build());
+                }
+            }, 3L + i * 3L);
+        }
     }
 
     private void build() {
@@ -72,6 +95,16 @@ public class LevelsMenu implements InventoryHolder {
                                 "&#F8BEFB&l┃ ",
                                 "&7● &fПожалуйста, подождите"
                         )
+                        .build());
+                levelIndex++;
+                continue;
+            }
+
+            if (level == null) {
+                inventory.setItem(LEVEL_SLOTS[levelIndex], new ItemBuilder(Material.PLAYER_HEAD)
+                        .texture(LEVEL_TEXTURES[levelIndex])
+                        .name("&7« &#F8BEFBУровень " + levelId + " &7»")
+                        .lore("&#F8BEFB&l┃ ", "&#F8BEFB&l┃ &fВ скором времени")
                         .build());
                 levelIndex++;
                 continue;
@@ -112,7 +145,8 @@ public class LevelsMenu implements InventoryHolder {
                 lore.add("&7● &fНажмите для перехода");
             }
 
-            ItemBuilder builder = new ItemBuilder(icon)
+            ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD)
+                    .texture(LEVEL_TEXTURES[levelIndex])
                     .name("&7« &#F8BEFB" + levelName + " &7»")
                     .lore(lore);
 

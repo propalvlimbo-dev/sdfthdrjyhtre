@@ -17,14 +17,17 @@ public class PlayerJoinListener implements Listener {
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        Player player = e.getPlayer();
-        plugin.getDao().load(player.getUniqueId(), player.getName()).thenAccept(data -> {
-            plugin.getQuestManager().cache(player.getUniqueId(), data);
-            Bukkit.getScheduler().runTask(plugin, () ->
-                    plugin.getQuestManager().incrementProgress(player, QuestType.JOIN_SERVER, q -> true, 1));
-        }).exceptionally(ex -> {
-            plugin.getLogger().severe("Не удалось загрузить данные игрока " + player.getName() + ": " + ex.getMessage());
+    public void onJoin(PlayerJoinEvent event) {
+        final Player player = event.getPlayer();
+        plugin.getDao().load(player.getUniqueId(), player.getName()).thenAccept(data ->
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    if (!player.isOnline()) return;
+                    plugin.getQuestManager().cache(player.getUniqueId(), data);
+                    plugin.getQuestManager().recoverPendingRewards(player);
+                    plugin.getQuestManager().incrementProgress(player, QuestType.JOIN_SERVER, q -> true, 1);
+                })).exceptionally(exception -> {
+            plugin.getLogger().severe("Не удалось загрузить данные игрока " + player.getName() + ": "
+                    + exception.getMessage());
             return null;
         });
     }

@@ -39,7 +39,6 @@ public class QuestManager {
     private final Map<UUID, Double> netherDistance = new ConcurrentHashMap<>();
 
     private static final long WARP_TELEPORT_WINDOW_MS = 120_000L;
-    private static final long QUEST_COOLDOWN_MS = 60_000L;
 
     public QuestManager(Main plugin) {
         this.plugin = plugin;
@@ -132,11 +131,28 @@ public class QuestManager {
     }
 
     public void cache(UUID uuid, PlayerQuestData data) {
-        cache.put(uuid, data);
+        // Concurrent join/menu loads must not replace newer in-memory progress with a stale snapshot.
+        cache.putIfAbsent(uuid, data);
     }
 
     public PlayerQuestData getData(UUID uuid) {
         return cache.get(uuid);
+    }
+
+    /** Claims legacy COMPLETED entries on load so old players never need to click them again. */
+    public void recoverPendingRewards(Player player) {
+        if (player == null || !player.isOnline()) return;
+        PlayerQuestData data = cache.get(player.getUniqueId());
+        if (data == null) return;
+
+        for (QuestLevel level : levels.values()) {
+            for (Quest quest : level.getQuests().values()) {
+                QuestEntry entry = data.getEntry(level.getId(), quest.getId());
+                if (entry == null || entry.getStatus() != QuestStatus.COMPLETED) continue;
+                data.setCooldownUntil(level.getId(), quest.getId(), 0L);
+                claimReward(player, data, level, quest, entry);
+            }
+        }
     }
 
     public void unload(UUID uuid) {
@@ -148,10 +164,15 @@ public class QuestManager {
     }
 
     public void loadOnlinePlayers() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
+        for (final Player player : Bukkit.getOnlinePlayers()) {
             final UUID uuid = player.getUniqueId();
             final String name = player.getName();
-            plugin.getDao().load(uuid, name).thenAccept(data -> cache.put(uuid, data));
+            plugin.getDao().load(uuid, name).thenAccept(data ->
+                    Bukkit.getScheduler().runTask(plugin, () -> {
+                        if (!player.isOnline()) return;
+                        cache(uuid, data);
+                        recoverPendingRewards(player);
+                    }));
         }
     }
 
@@ -211,7 +232,7 @@ public class QuestManager {
         if (prev == null) return false;
         QuestStatus st = prev.getStatus();
         if (st != QuestStatus.COMPLETED && st != QuestStatus.CLAIMED) return false;
-        return System.currentTimeMillis() >= data.getCooldownUntil(levelId, prevId);
+        return true;
     }
 
     public int getCurrentLevel(PlayerQuestData data) {
@@ -263,24 +284,7 @@ public class QuestManager {
         }
 
         if (!isQuestUnlocked(data, levelId, questId)) {
-            QuestLevel currentLevel = levels.get(levelId);
-            int previousId = -1;
-            if (currentLevel != null) {
-                for (Integer id : currentLevel.getQuests().keySet()) if (id < questId && id > previousId) previousId = id;
-            }
-            if (previousId > 0) {
-                long remaining = getQuestCooldownRemaining(data, levelId, previousId);
-                if (remaining > 0) {
-                    long minutes = (remaining + 59999L) / 60000L;
-                    Map<String, String> cooldownPh = new HashMap<>();
-                    cooldownPh.put("time", minutes + " мин.");
-                    player.sendMessage(plugin.getConfigManager().getMessage("quest-cooldown", cooldownPh));
-                } else {
-                    player.sendMessage(plugin.getConfigManager().getMessage("quest-locked-sequence"));
-                }
-            } else {
-                player.sendMessage(plugin.getConfigManager().getMessage("quest-locked-sequence"));
-            }
+            player.sendMessage(plugin.getConfigManager().getMessage("quest-locked-sequence"));
             playSound(player, "level-locked");
             return;
         }
@@ -326,25 +330,23 @@ public class QuestManager {
         switch (entry.getStatus()) {
             case AVAILABLE: {
                 boolean instant = quest.getType() == QuestType.MANUAL_CLICK;
-                entry.setStatus(instant ? QuestStatus.COMPLETED : QuestStatus.IN_PROGRESS);
-                entry.setProgress(instant ? quest.getAmount() : 0);
+                if (instant) {
+                    markCompleted(player, data, levelId, quest, entry);
+                } else {
+                    entry.setStatus(QuestStatus.IN_PROGRESS);
+                    entry.setProgress(0);
 
-                Map<String, String> ph = new HashMap<>();
-                ph.put("quest", ColorUtils.colorize(quest.getName()));
-
-                if (!instant) {
+                    Map<String, String> ph = new HashMap<>();
+                    ph.put("quest", ColorUtils.colorize(quest.getName()));
                     player.sendMessage(plugin.getConfigManager().getMessage("quest-activated", ph));
                     for (String line : quest.getLore()) {
                         player.sendMessage(ColorUtils.colorize(line));
                     }
                     playSound(player, "quest-activated");
+                    plugin.getDao().saveProgress(player.getUniqueId(), levelId, questId,
+                            entry.getStatus(), entry.getProgress(), 0L);
                 }
 
-                plugin.getDao().saveProgress(player.getUniqueId(), levelId, questId,
-                        entry.getStatus(), entry.getProgress());
-                if (instant) {
-                    claimReward(player, data, level, quest, entry);
-                }
                 if (quest.getType() == QuestType.COLLECT_FLOWERS) {
                     updateFlowerCollection(player);
                 }
@@ -524,20 +526,26 @@ public class QuestManager {
     }
 
     private void markCompleted(Player player, PlayerQuestData data, int levelId, Quest quest, QuestEntry entry) {
+        if (entry.getStatus() == QuestStatus.CLAIMED) return;
+
         entry.setStatus(QuestStatus.COMPLETED);
         entry.setProgress(quest.getAmount());
-        long cooldownUntil = System.currentTimeMillis() + QUEST_COOLDOWN_MS;
-        data.setCooldownUntil(levelId, quest.getId(), cooldownUntil);
-        plugin.getDao().saveProgress(player.getUniqueId(), levelId, quest.getId(),
-                entry.getStatus(), entry.getProgress(), cooldownUntil);
+        data.setCooldownUntil(levelId, quest.getId(), 0L);
 
-        // Награда выдаётся сразу после выполнения — повторный клик в меню не нужен.
         QuestLevel level = levels.get(levelId);
-        if (level != null) claimReward(player, data, level, quest, entry);
+        if (level != null) {
+            // Claim and persist in the same completion path; no second click is required.
+            claimReward(player, data, level, quest, entry);
+        }
     }
 
     private void claimReward(Player player, PlayerQuestData data, QuestLevel level, Quest quest, QuestEntry entry) {
+        if (entry.getStatus() == QuestStatus.CLAIMED) return;
+
         entry.setStatus(QuestStatus.CLAIMED);
+        data.setCooldownUntil(level.getId(), quest.getId(), 0L);
+        plugin.getDao().saveProgress(player.getUniqueId(), level.getId(), quest.getId(),
+                entry.getStatus(), entry.getProgress(), 0L);
         plugin.getRewardManager().giveRewards(player, quest.getRewardCommands());
 
         Map<String, String> ph = new HashMap<>();
@@ -545,26 +553,43 @@ public class QuestManager {
         player.sendMessage(plugin.getConfigManager().getMessage("reward-claimed", ph));
         playSound(player, "reward-claimed");
 
-        plugin.getDao().saveProgress(player.getUniqueId(), level.getId(), quest.getId(),
-                entry.getStatus(), entry.getProgress(), data.getCooldownUntil(level.getId(), quest.getId()));
-
         if (isLevelFullyClaimedExceptMega(data, level.getId()) && !data.isMegaClaimed(level.getId())) {
             data.setMegaClaimed(level.getId(), true);
-            plugin.getRewardManager().giveRewards(player, level.getMegaRewardCommands());
+            List<String> megaCommands = level.getMegaRewardCommands();
+            if (megaCommands != null && !megaCommands.isEmpty()) {
+                plugin.getRewardManager().giveRewards(player, megaCommands);
+            }
 
-            Map<String, String> ph2 = new HashMap<>();
-            ph2.put("level", ColorUtils.colorize(level.getName()));
-            player.sendMessage(plugin.getConfigManager().getMessage("level-completed", ph2));
+            Map<String, String> levelPh = new HashMap<>();
+            levelPh.put("level", ColorUtils.colorize(level.getName()));
+            String customMessage = level.getMegaRewardMessage();
+            if (customMessage != null && !customMessage.trim().isEmpty()) {
+                player.sendMessage(ColorUtils.colorize(customMessage.replace("%level%", level.getName())));
+            } else {
+                String messageKey = megaCommands == null || megaCommands.isEmpty()
+                        ? "level-completed-no-reward" : "level-completed";
+                player.sendMessage(plugin.getConfigManager().getMessage(messageKey, levelPh));
+            }
             playSound(player, "level-completed");
-
             plugin.getDao().saveMega(player.getUniqueId(), level.getId(), true);
 
             QuestLevel next = getNextLevel(level.getId());
             if (next != null) {
-                Map<String, String> ph3 = new HashMap<>();
-                ph3.put("level", ColorUtils.colorize(next.getName()));
-                player.sendMessage(plugin.getConfigManager().getMessage("level-unlocked", ph3));
+                Map<String, String> nextLevelPh = new HashMap<>();
+                nextLevelPh.put("level", ColorUtils.colorize(next.getName()));
+                player.sendMessage(plugin.getConfigManager().getMessage("level-unlocked", nextLevelPh));
             }
+        }
+        refreshOpenMenu(player);
+    }
+
+    private void refreshOpenMenu(Player player) {
+        if (!player.isOnline() || player.getOpenInventory() == null) return;
+        Object holder = player.getOpenInventory().getTopInventory().getHolder();
+        if (holder instanceof ru.rooyzee.elytrixquests.gui.LevelMenu) {
+            ((ru.rooyzee.elytrixquests.gui.LevelMenu) holder).build();
+        } else if (holder instanceof ru.rooyzee.elytrixquests.gui.LevelsMenu) {
+            ((ru.rooyzee.elytrixquests.gui.LevelsMenu) holder).build();
         }
     }
 
@@ -593,16 +618,12 @@ public class QuestManager {
                 int newProgress = Math.min(entry.getProgress() + amountToAdd, quest.getAmount());
                 entry.setProgress(newProgress);
 
-                long cooldownUntil = 0L;
                 if (newProgress >= quest.getAmount()) {
-                    entry.setStatus(QuestStatus.COMPLETED);
-                    cooldownUntil = System.currentTimeMillis() + QUEST_COOLDOWN_MS;
-                    data.setCooldownUntil(level.getId(), quest.getId(), cooldownUntil);
+                    markCompleted(player, data, level.getId(), quest, entry);
+                } else {
+                    plugin.getDao().saveProgress(player.getUniqueId(), level.getId(), quest.getId(),
+                            entry.getStatus(), entry.getProgress(), 0L);
                 }
-
-                plugin.getDao().saveProgress(player.getUniqueId(), level.getId(), quest.getId(),
-                        entry.getStatus(), entry.getProgress(), cooldownUntil);
-                if (newProgress >= quest.getAmount()) claimReward(player, data, level, quest, entry);
             }
         }
     }
@@ -623,23 +644,14 @@ public class QuestManager {
                 int newProgress = Math.min(Math.max(value, entry.getProgress()), quest.getAmount());
                 entry.setProgress(newProgress);
 
-                long cooldownUntil = 0L;
                 if (newProgress >= quest.getAmount()) {
-                    entry.setStatus(QuestStatus.COMPLETED);
-                    cooldownUntil = System.currentTimeMillis() + QUEST_COOLDOWN_MS;
-                    data.setCooldownUntil(level.getId(), quest.getId(), cooldownUntil);
+                    markCompleted(player, data, level.getId(), quest, entry);
+                } else {
+                    plugin.getDao().saveProgress(player.getUniqueId(), level.getId(), quest.getId(),
+                            entry.getStatus(), entry.getProgress(), 0L);
                 }
-
-                plugin.getDao().saveProgress(player.getUniqueId(), level.getId(), quest.getId(),
-                        entry.getStatus(), entry.getProgress(), cooldownUntil);
-                if (newProgress >= quest.getAmount()) claimReward(player, data, level, quest, entry);
             }
         }
-    }
-
-    private void notifyReady(Player player) {
-        player.sendMessage(plugin.getConfigManager().getMessage("quest-ready"));
-        playSound(player, "quest-ready");
     }
 
     public void addDistanceProgress(Player player, QuestType type, double distance) {
@@ -807,16 +819,12 @@ public class QuestManager {
                 if (!set.add(victim.getUniqueId())) continue;
                 int value = Math.min(set.size(), quest.getAmount());
                 entry.setProgress(value);
-                long cooldownUntil = 0L;
                 if (value >= quest.getAmount()) {
-                    entry.setStatus(QuestStatus.COMPLETED);
-                    cooldownUntil = System.currentTimeMillis() + QUEST_COOLDOWN_MS;
-                    data.setCooldownUntil(level.getId(), quest.getId(), cooldownUntil);
-                    notifyReady(attacker);
+                    markCompleted(attacker, data, level.getId(), quest, entry);
+                } else {
+                    plugin.getDao().saveProgress(attacker.getUniqueId(), level.getId(), quest.getId(),
+                            entry.getStatus(), entry.getProgress(), 0L);
                 }
-                plugin.getDao().saveProgress(attacker.getUniqueId(), level.getId(), quest.getId(),
-                        entry.getStatus(), entry.getProgress(), cooldownUntil);
-                if (value >= quest.getAmount()) claimReward(attacker, data, level, quest, entry);
             }
         }
     }
@@ -856,22 +864,19 @@ public class QuestManager {
                 int newProgress = Math.min(set.size(), quest.getAmount());
                 entry.setProgress(newProgress);
 
-                long cooldownUntil = 0L;
                 if (newProgress >= quest.getAmount()) {
-                    entry.setStatus(QuestStatus.COMPLETED);
-                    cooldownUntil = System.currentTimeMillis() + QUEST_COOLDOWN_MS;
-                    data.setCooldownUntil(level.getId(), quest.getId(), cooldownUntil);
+                    markCompleted(killer, data, level.getId(), quest, entry);
+                } else {
+                    plugin.getDao().saveProgress(killer.getUniqueId(), level.getId(), quest.getId(),
+                            entry.getStatus(), entry.getProgress(), 0L);
                 }
-
-                plugin.getDao().saveProgress(killer.getUniqueId(), level.getId(), quest.getId(),
-                        entry.getStatus(), entry.getProgress(), cooldownUntil);
-                if (newProgress >= quest.getAmount()) claimReward(killer, data, level, quest, entry);
             }
         }
     }
 
+    /** Kept for integrations; sequential quests no longer use a cooldown. */
     public long getQuestCooldownRemaining(PlayerQuestData data, int levelId, int questId) {
-        return Math.max(0L, data.getCooldownUntil(levelId, questId) - System.currentTimeMillis());
+        return 0L;
     }
 
     /** Баланс PlayerPoints для задания накопления коинов. */
@@ -959,10 +964,7 @@ public class QuestManager {
         if (data == null || quest == null) return;
 
         QuestEntry entry = data.getOrCreate(levelId, questId);
-        entry.setStatus(QuestStatus.COMPLETED);
-        entry.setProgress(quest.getAmount());
-        plugin.getDao().saveProgress(player.getUniqueId(), levelId, questId,
-                entry.getStatus(), entry.getProgress());
+        markCompleted(player, data, levelId, quest, entry);
     }
 
     public void forceUnlock(Player player, int targetLevel) {
@@ -986,11 +988,11 @@ public class QuestManager {
     public void sendInfo(CommandSender sender, Player target) {
         PlayerQuestData data = cache.get(target.getUniqueId());
         if (data == null) {
-            sender.sendMessage(ColorUtils.colorize("&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cДанные игрока ещё не загружены."));
+            sender.sendMessage(ColorUtils.colorize("&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cОшибка &f— данные игрока ещё загружаются"));
             return;
         }
 
-        sender.sendMessage(ColorUtils.colorize("&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &#F8BEFBПрогресс игрока: &#F8BEFB" + target.getName()));
+        sender.sendMessage(ColorUtils.colorize("&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &#F8BEFBИнформация &f— прогресс игрока: &#F8BEFB" + target.getName()));
 
         for (QuestLevel level : levels.values()) {
             boolean unlocked = isLevelUnlocked(data, level.getId());

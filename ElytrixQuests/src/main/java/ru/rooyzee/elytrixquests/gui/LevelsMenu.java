@@ -8,28 +8,25 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import ru.rooyzee.elytrixquests.Main;
 import ru.rooyzee.elytrixquests.data.PlayerQuestData;
+import ru.rooyzee.elytrixquests.data.QuestStatus;
 import ru.rooyzee.elytrixquests.quest.Quest;
 import ru.rooyzee.elytrixquests.quest.QuestLevel;
 import ru.rooyzee.elytrixquests.util.ColorUtils;
 import ru.rooyzee.elytrixquests.util.ItemBuilder;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LevelsMenu implements InventoryHolder {
 
     private final Main plugin;
     private final Player player;
     private final Inventory inventory;
+    private final MenuAnimator animator;
 
     private static final int[] LEVEL_SLOTS = {21, 22, 23, 31};
-    private static final Material[] LEVEL_ICONS = {
-            Material.EMERALD,
-            Material.GOLD_INGOT,
-            Material.DIAMOND,
-            Material.NETHER_STAR
-    };
-
     private static final String[] LEVEL_TEXTURES = {
             "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTg4YmNlNDk3Y2ZhNWY2MTE4MzlmNmRhMjFjOTVkMzRlM2U3MjNjMmNjNGMzYzMxOWI1NjI3NzNkMTIxNiJ9fX0=",
             "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjNlZWI0NDA0YTIyZTNjNWZiZGQ0ODM2YzcyYTdmNTljMTYxNTU4OGE5YzU3ZDI4NzE1NTQ1MzcyOGFlYSJ9fX0=",
@@ -37,135 +34,141 @@ public class LevelsMenu implements InventoryHolder {
             "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzRhNWRiOGVhNzk3N2M3Zjk2YTY4ZGZlMWZhNDliNjZlYWZiZWNkMzgxMWE2YjZkM2QxNzdkZGE1Zjk0MjMxMyJ9fX0="
     };
 
-    // Точный массив из твоего меню
     private static final int[] BLACK_SLOTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 17, 18, 26};
     private static final int[] PURPLE_SLOTS = {27, 35, 36, 37, 43, 44, 45, 46, 47, 48, 50, 51, 52, 53};
 
     public LevelsMenu(Main plugin, Player player) {
         this.plugin = plugin;
         this.player = player;
-        this.inventory = Bukkit.createInventory(this, 54, ColorUtils.colorize("&#F8BEFB&lКвесты &7» &#F8BEFBУровни"));
+        this.inventory = Bukkit.createInventory(this, 54,
+                ColorUtils.colorize("&#F8BEFB&lКвесты &7» &#F8BEFBУровни"));
+        this.animator = new MenuAnimator(plugin);
     }
 
     public void open() {
-        build();
+        Map<Integer, ItemStack> levelItems = createLevelItems();
+        buildFrame();
+
+        ItemStack placeholder = ItemBuilder.filler(Material.MAGENTA_STAINED_GLASS_PANE);
+        for (Integer slot : levelItems.keySet()) {
+            inventory.setItem(slot, placeholder);
+        }
+
         player.openInventory(inventory);
-        animateOpening();
+        animator.animate(player, inventory, levelItems, this::build);
     }
 
-    private void animateOpening() {
-        final int[] slots = {21, 22, 23, 31};
-        for (int i = 0; i < slots.length; i++) {
-            final int step = i;
-            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-                if (!player.isOnline() || player.getOpenInventory().getTopInventory() != inventory) return;
-                build();
-                for (int j = step + 1; j < slots.length; j++) {
-                    inventory.setItem(slots[j], new ItemBuilder(Material.CLOCK)
-                            .name("&7« &eЗагрузка... &7»").build());
-                }
-            }, 3L + i * 3L);
+    public void build() {
+        if (animator.isRunning()) {
+            return;
+        }
+        buildFrame();
+        for (Map.Entry<Integer, ItemStack> item : createLevelItems().entrySet()) {
+            inventory.setItem(item.getKey(), item.getValue());
         }
     }
 
-    private void build() {
+    private void buildFrame() {
         inventory.clear();
 
         ItemStack blackPanel = ItemBuilder.filler(Material.BLACK_STAINED_GLASS_PANE);
-        for (int slot : BLACK_SLOTS) inventory.setItem(slot, blackPanel);
+        for (int slot : BLACK_SLOTS) {
+            inventory.setItem(slot, blackPanel);
+        }
 
         ItemStack purplePanel = ItemBuilder.filler(Material.PURPLE_STAINED_GLASS_PANE);
-        for (int slot : PURPLE_SLOTS) inventory.setItem(slot, purplePanel);
+        for (int slot : PURPLE_SLOTS) {
+            inventory.setItem(slot, purplePanel);
+        }
 
+        inventory.setItem(49, new ItemBuilder(Material.RED_DYE)
+                .name("&7« &cЗакрыть меню &7»")
+                .lore(
+                        "&#F8BEFB&l┃ ",
+                        "&#F8BEFB&l┃ &fВернуться в игровой мир.",
+                        "&#F8BEFB&l┃ ",
+                        "&7● &fНажмите для закрытия"
+                )
+                .build());
+    }
+
+    private Map<Integer, ItemStack> createLevelItems() {
+        Map<Integer, ItemStack> items = new LinkedHashMap<>();
         PlayerQuestData data = plugin.getQuestManager().getData(player.getUniqueId());
-        boolean isLoading = (data == null);
 
-        int levelIndex = 0;
-        for (int levelId : new int[]{1, 2, 3, 4}) {
+        for (int index = 0; index < LEVEL_SLOTS.length; index++) {
+            int levelId = index + 1;
             QuestLevel level = plugin.getQuestManager().getLevel(levelId);
             String levelName = level != null ? level.getName() : "Уровень " + levelId;
 
-            if (isLoading) {
-                inventory.setItem(LEVEL_SLOTS[levelIndex], new ItemBuilder(Material.CLOCK)
+            if (data == null) {
+                items.put(LEVEL_SLOTS[index], new ItemBuilder(Material.CLOCK)
                         .name("&7« &eЗагрузка... &7»")
                         .lore(
                                 "&#F8BEFB&l┃ ",
                                 "&#F8BEFB&l┃ &fДанные профиля",
-                                "&#F8BEFB&l┃ &fещё не загрузились.",
+                                "&#F8BEFB&l┃ &fещё загружаются.",
                                 "&#F8BEFB&l┃ ",
                                 "&7● &fПожалуйста, подождите"
                         )
                         .build());
-                levelIndex++;
                 continue;
             }
 
             if (level == null) {
-                inventory.setItem(LEVEL_SLOTS[levelIndex], new ItemBuilder(Material.PLAYER_HEAD)
-                        .texture(LEVEL_TEXTURES[levelIndex])
+                items.put(LEVEL_SLOTS[index], new ItemBuilder(Material.PLAYER_HEAD)
+                        .texture(LEVEL_TEXTURES[index])
                         .name("&7« &#F8BEFBУровень " + levelId + " &7»")
-                        .lore("&#F8BEFB&l┃ ", "&#F8BEFB&l┃ &fВ скором времени")
+                        .lore("&#F8BEFB&l┃ ", "&#F8BEFB&l┃ &fСкоро появится")
                         .build());
-                levelIndex++;
                 continue;
             }
 
             boolean unlocked = plugin.getQuestManager().isLevelUnlocked(data, levelId);
             boolean completed = plugin.getQuestManager().isLevelFullyClaimed(data, levelId);
-
             int completedCount = 0;
-            int totalCount = level != null ? level.getQuests().size() : 0;
-            if (level != null) {
-                for (Quest q : level.getQuests().values()) {
-                    if (plugin.getQuestManager().getStatus(data, levelId, q.getId()) == ru.rooyzee.elytrixquests.data.QuestStatus.CLAIMED) {
-                        completedCount++;
-                    }
+            int totalCount = level.getQuests().size();
+            for (Quest quest : level.getQuests().values()) {
+                if (plugin.getQuestManager().getStatus(data, levelId, quest.getId()) == QuestStatus.CLAIMED) {
+                    completedCount++;
                 }
             }
 
-            Material icon = LEVEL_ICONS[levelIndex];
             List<String> lore = new ArrayList<>();
             lore.add("&#F8BEFB&l┃ ");
 
             if (!unlocked) {
-                icon = Material.BARRIER;
                 lore.add("&#F8BEFB&l┃ &fСтатус: &cЗаблокировано");
-                lore.add("&#F8BEFB&l┃ &fТребование: &#F8BEFBПройти Уровень " + (levelId - 1));
+                lore.add("&#F8BEFB&l┃ &fТребование: &#F8BEFBПройти уровень " + (levelId - 1));
                 lore.add("&#F8BEFB&l┃ ");
-                lore.add("&7● &cНедоступно для выбора");
+                lore.add("&7● &cСначала завершите предыдущий уровень");
             } else if (completed) {
                 lore.add("&#F8BEFB&l┃ &fСтатус: &aПройден полностью");
-                lore.add("&#F8BEFB&l┃ &fПрогресс: &#F8BEFB" + completedCount + " &fиз &#F8BEFB" + totalCount);
+                lore.add("&#F8BEFB&l┃ &fКвесты: &#F8BEFB" + completedCount + " &fиз &#F8BEFB" + totalCount);
                 lore.add("&#F8BEFB&l┃ ");
                 lore.add("&7● &fНажмите для просмотра");
             } else {
                 lore.add("&#F8BEFB&l┃ &fСтатус: &#F8BEFBДоступен");
-                lore.add("&#F8BEFB&l┃ &fПрогресс: &#F8BEFB" + completedCount + " &fиз &#F8BEFB" + totalCount);
+                lore.add("&#F8BEFB&l┃ &fКвесты: &#F8BEFB" + completedCount + " &fиз &#F8BEFB" + totalCount);
                 lore.add("&#F8BEFB&l┃ ");
-                lore.add("&7● &fНажмите для перехода");
+                lore.add("&7● &fНажмите для открытия");
             }
 
             ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD)
-                    .texture(LEVEL_TEXTURES[levelIndex])
+                    .texture(LEVEL_TEXTURES[index])
                     .name("&7« &#F8BEFB" + levelName + " &7»")
                     .lore(lore);
 
-            if (completed) builder.glow();
-
-            inventory.setItem(LEVEL_SLOTS[levelIndex], builder.build());
-            levelIndex++;
+            if (completed) {
+                builder.glow();
+            }
+            items.put(LEVEL_SLOTS[index], builder.build());
         }
+        return items;
+    }
 
-        // Кнопка закрыть меню
-        inventory.setItem(49, new ItemBuilder(Material.RED_DYE)
-                .name("&7« &cЗакрыть меню &7»")
-                .lore(
-                        "&#F8BEFB&l┃ ",
-                        "&#F8BEFB&l┃ &fВыход в игровой мир.",
-                        "&#F8BEFB&l┃ ",
-                        "&7● &fНажмите для закрытия"
-                )
-                .build());
+    public boolean isAnimating() {
+        return animator.isRunning();
     }
 
     @Override

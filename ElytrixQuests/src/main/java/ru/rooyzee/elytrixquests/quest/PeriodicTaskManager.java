@@ -49,7 +49,11 @@ public class PeriodicTaskManager {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (p.getOpenInventory() != null && p.getOpenInventory().getTopInventory().getHolder()
                         instanceof ru.rooyzee.elytrixquests.gui.LevelMenu) {
-                    ((ru.rooyzee.elytrixquests.gui.LevelMenu) p.getOpenInventory().getTopInventory().getHolder()).build();
+                    ru.rooyzee.elytrixquests.gui.LevelMenu menu =
+                            (ru.rooyzee.elytrixquests.gui.LevelMenu) p.getOpenInventory().getTopInventory().getHolder();
+                    if (!menu.isAnimating()) {
+                        menu.build();
+                    }
                 }
             }
         }, 10L, 10L);

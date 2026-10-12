@@ -30,7 +30,7 @@ public class ElytrixQuestsCommand implements CommandExecutor, TabCompleter {
             if (sender instanceof Player) {
                 plugin.getGuiManager().openLevelsMenu((Player) sender);
             } else {
-                sender.sendMessage(ColorUtils.colorize(PREFIX + "&#F8BEFBElytrixQuests &fv" + plugin.getDescription().getVersion()));
+                sender.sendMessage(ColorUtils.colorize(PREFIX + "&#F8BEFBElytrixQuests &f— версия &#F8BEFB" + plugin.getDescription().getVersion()));
             }
             return true;
         }
@@ -41,7 +41,7 @@ public class ElytrixQuestsCommand implements CommandExecutor, TabCompleter {
                 if (sender instanceof Player) {
                     handleActivate((Player) sender, args);
                 } else {
-                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cЭта команда доступна только игрокам."));
+                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cОшибка &f— команда доступна только игрокам"));
                 }
                 break;
 
@@ -53,7 +53,7 @@ public class ElytrixQuestsCommand implements CommandExecutor, TabCompleter {
                 if (sender instanceof Player) {
                     plugin.getGuiManager().openLevelsMenu((Player) sender);
                 } else {
-                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cНеизвестная подкоманда. Используйте &f/elytrixquests admin"));
+                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cОшибка &f— неизвестная подкоманда. Используйте &f/elytrixquests admin"));
                 }
                 break;
         }
@@ -63,7 +63,7 @@ public class ElytrixQuestsCommand implements CommandExecutor, TabCompleter {
 
     private void handleActivate(Player player, String[] args) {
         if (args.length < 3) {
-            player.sendMessage(ColorUtils.colorize(PREFIX + "&cИспользование: &f/elytrixquests activate <уровень> <квест>"));
+            player.sendMessage(ColorUtils.colorize(PREFIX + "&cОшибка &f— используйте: &f/elytrixquests activate <уровень> <задание>"));
             return;
         }
         try {
@@ -71,7 +71,7 @@ public class ElytrixQuestsCommand implements CommandExecutor, TabCompleter {
             int quest = Integer.parseInt(args[2]);
             plugin.getQuestManager().handleClick(player, level, quest);
         } catch (NumberFormatException e) {
-            player.sendMessage(ColorUtils.colorize(PREFIX + "&cПараметры уровня и квеста должны быть числами."));
+            player.sendMessage(ColorUtils.colorize(PREFIX + "&cОшибка &f— уровень и задание должны быть числами"));
         }
     }
 
@@ -90,69 +90,69 @@ public class ElytrixQuestsCommand implements CommandExecutor, TabCompleter {
 
             case "reload":
                 plugin.reload();
-                sender.sendMessage(ColorUtils.colorize(PREFIX + "&aКонфигурация и данные игроков успешно перезагружены."));
+                sender.sendMessage(ColorUtils.colorize(PREFIX + "&aУспешно &f— конфигурация и данные игроков перезагружены"));
                 break;
 
             case "reset": {
                 if (args.length < 3) {
-                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cИспользование: &f/elytrixquests admin reset <игрок>"));
+                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cОшибка &f— используйте: &f/elytrixquests admin reset <игрок>"));
                     return;
                 }
                 OfflinePlayer target = Bukkit.getOfflinePlayer(args[2]);
                 plugin.getQuestManager().resetPlayer(target.getUniqueId());
-                sender.sendMessage(ColorUtils.colorize(PREFIX + "&aПрогресс квестов игрока &#F8BEFB" + args[2] + " &aуспешно сброшен."));
+                sender.sendMessage(ColorUtils.colorize(PREFIX + "&aУспешно &f— прогресс игрока &#F8BEFB" + args[2] + " &fсброшен"));
                 break;
             }
 
             case "complete": {
                 if (args.length < 5) {
-                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cИспользование: &f/elytrixquests admin complete <игрок> <уровень> <квест>"));
+                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cОшибка &f— используйте: &f/elytrixquests admin complete <игрок> <уровень> <задание>"));
                     return;
                 }
                 Player target = Bukkit.getPlayer(args[2]);
                 if (target == null) {
-                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cИгрок &#F8BEFB" + args[2] + " &cне найден на сервере."));
+                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cОшибка &f— игрок &#F8BEFB" + args[2] + " &fне найден"));
                     return;
                 }
                 try {
                     int level = Integer.parseInt(args[3]);
                     int quest = Integer.parseInt(args[4]);
                     plugin.getQuestManager().forceComplete(target, level, quest);
-                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&aКвест &#F8BEFB" + level + "-" + quest + " &aуспешно засчитан для игрока &#F8BEFB" + target.getName() + "&a."));
+                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&aУспешно &f— задание &#F8BEFB" + level + "-" + quest + " &fзасчитано игроку &#F8BEFB" + target.getName()));
                 } catch (NumberFormatException e) {
-                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cПараметры уровня и квеста должны быть числами."));
+                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cОшибка &f— уровень и задание должны быть числами"));
                 }
                 break;
             }
 
             case "unlock": {
                 if (args.length < 4) {
-                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cИспользование: &f/elytrixquests admin unlock <игрок> <уровень>"));
+                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cОшибка &f— используйте: &f/elytrixquests admin unlock <игрок> <уровень>"));
                     return;
                 }
                 Player target = Bukkit.getPlayer(args[2]);
                 if (target == null) {
-                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cИгрок &#F8BEFB" + args[2] + " &cне найден на сервере."));
+                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cОшибка &f— игрок &#F8BEFB" + args[2] + " &fне найден"));
                     return;
                 }
                 try {
                     int level = Integer.parseInt(args[3]);
                     plugin.getQuestManager().forceUnlock(target, level);
-                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&aУровень &#F8BEFB" + level + " &aуспешно открыт для игрока &#F8BEFB" + target.getName() + "&a."));
+                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&aУспешно &f— уровень &#F8BEFB" + level + " &fоткрыт игроку &#F8BEFB" + target.getName()));
                 } catch (NumberFormatException e) {
-                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cНомер уровня должен быть числом."));
+                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cОшибка &f— номер уровня должен быть числом"));
                 }
                 break;
             }
 
             case "info": {
                 if (args.length < 3) {
-                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cИспользование: &f/elytrixquests admin info <игрок>"));
+                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cОшибка &f— используйте: &f/elytrixquests admin info <игрок>"));
                     return;
                 }
                 Player target = Bukkit.getPlayer(args[2]);
                 if (target == null) {
-                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cИгрок &#F8BEFB" + args[2] + " &cне найден на сервере."));
+                    sender.sendMessage(ColorUtils.colorize(PREFIX + "&cОшибка &f— игрок &#F8BEFB" + args[2] + " &fне найден"));
                     return;
                 }
                 plugin.getQuestManager().sendInfo(sender, target);
@@ -166,7 +166,7 @@ public class ElytrixQuestsCommand implements CommandExecutor, TabCompleter {
     }
 
     private void sendAdminHelp(CommandSender sender) {
-        sender.sendMessage(ColorUtils.colorize(PREFIX + "&#F8BEFBКоманды управления квестами"));
+        sender.sendMessage(ColorUtils.colorize(PREFIX + "&#F8BEFBКоманды управления заданиями"));
         sender.sendMessage(ColorUtils.colorize("&#F8BEFB&l┃ &f/elytrixquests admin reload &7— &#F8BEFBПерезагрузить конфигурацию"));
         sender.sendMessage(ColorUtils.colorize("&#F8BEFB&l┃ &f/elytrixquests admin reset &f<игрок> &7— &#F8BEFBСбросить весь прогресс"));
         sender.sendMessage(ColorUtils.colorize("&#F8BEFB&l┃ &f/elytrixquests admin complete &f<игрок> <ур> <квест> &7— &#F8BEFBЗасчитать квест"));

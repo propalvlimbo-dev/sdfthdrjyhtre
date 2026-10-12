@@ -35,6 +35,13 @@ auth:
 
 # --- Звуки событий ---
 # Названия — звуки Minecraft 1.16+. Пустая строка ('') отключает звук.
+# Анимация меню повторяет мягкое появление предметов по волне из ElytrixSeller.
+gui:
+  animation:
+    enabled: true
+    delay: 1
+    sound: BLOCK_NOTE_BLOCK_PLING
+
 sounds:
   quest-activated: ENTITY_EXPERIENCE_ORB_PICKUP
   quest-ready: ENTITY_PLAYER_LEVELUP

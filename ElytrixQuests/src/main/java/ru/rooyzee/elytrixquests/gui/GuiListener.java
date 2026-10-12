@@ -33,6 +33,7 @@ public class GuiListener implements Listener {
         // ------------------------------------
         if (holder instanceof LevelsMenu) {
             e.setCancelled(true);
+            if (((LevelsMenu) holder).isAnimating()) return;
             int slot = e.getRawSlot();
 
             if (slot == 21) openLevel(player, 1);
@@ -47,8 +48,9 @@ public class GuiListener implements Listener {
         // ------------------------------------
         else if (holder instanceof LevelMenu) {
             e.setCancelled(true);
-            int slot = e.getRawSlot();
             LevelMenu levelMenu = (LevelMenu) holder;
+            if (levelMenu.isAnimating()) return;
+            int slot = e.getRawSlot();
             int levelId = levelMenu.getLevelId();
 
             // Кнопка Назад (45 слот)
@@ -107,7 +109,8 @@ public class GuiListener implements Listener {
     private void refreshLevelMenu(Player player, LevelMenu menu) {
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             if (player.isOnline() && player.getOpenInventory() != null
-                    && player.getOpenInventory().getTopInventory().getHolder() instanceof LevelMenu) {
+                    && player.getOpenInventory().getTopInventory().getHolder() instanceof LevelMenu
+                    && !menu.isAnimating()) {
                 menu.build();
             }
         }, 1L);

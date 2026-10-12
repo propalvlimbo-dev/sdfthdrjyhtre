@@ -14,20 +14,28 @@ public class RewardManager {
         this.plugin = plugin;
     }
 
-    public void giveRewards(Player player, List<String> commands) {
+    public void giveRewards(final Player player, final List<String> commands) {
         if (commands == null || commands.isEmpty()) return;
 
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        Runnable giveRewards = () -> {
             for (String raw : commands) {
-                String cmd = raw.replace("%player%", player.getName())
+                String command = raw.replace("%player%", player.getName())
                         .replace("%uuid%", player.getUniqueId().toString());
 
                 if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                    cmd = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, cmd);
+                    command = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, command);
                 }
 
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
             }
-        });
+        };
+
+        // Quest completion normally runs on the server thread; dispatch now so a disconnect
+        // cannot race the queued give command. Keep async callers safe as well.
+        if (Bukkit.isPrimaryThread()) {
+            giveRewards.run();
+        } else {
+            Bukkit.getScheduler().runTask(plugin, giveRewards);
+        }
     }
 }

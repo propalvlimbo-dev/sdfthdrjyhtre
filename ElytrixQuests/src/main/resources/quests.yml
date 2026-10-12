@@ -3,8 +3,8 @@
 #
 # Команды наград выполняются из консоли. Доступны %player%, %uuid% и,
 # если установлен PlaceholderAPI, его плейсхолдеры.
-# Для ванильных предметов используй minecraft:give. Денежные награды
-# выдаются обычными eco-монетами; донат-очки, донат-киты и кейсы не выдаются.
+# Для ванильных предметов используй minecraft:give. p give начисляет коины,
+# eco give — игровые монеты; донат-киты и кейсы не выдаются.
 #
 # У каждого уровня может быть бонус за полное прохождение:
 #   mega-reward.commands — команды выдачи бонуса (необязательно)
@@ -21,6 +21,7 @@ levels:
       commands:
         - "minecraft:give %player% netherite_sword{Enchantments:[{id:\"minecraft:sharpness\",lvl:5s},{id:\"minecraft:looting\",lvl:3s},{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:mending\",lvl:1s}]} 1"
         - "minecraft:give %player% netherite_ingot 4"
+        - "p give %player% 25"
         - "eco give %player% 25000"
     quests:
       1:
@@ -31,6 +32,7 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fАлмазный шлем &7(Защита IV, Прочность III)"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×10"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×10 000"
         icon: PAPER
         type: COMMAND_TRIGGER
@@ -38,6 +40,7 @@ levels:
         amount: 1
         rewards:
           - "minecraft:give %player% diamond_helmet{Enchantments:[{id:\"minecraft:protection\",lvl:4s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
+          - "p give %player% 10"
           - "eco give %player% 10000"
       2:
         name: "Запривать территорию"
@@ -47,12 +50,14 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fАлмазная кирка &7(Эффективность V, Удача III, Прочность III)"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×10"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×10 000"
         icon: WOODEN_AXE
         type: REGION_CLAIM
         amount: 1
         rewards:
           - "minecraft:give %player% diamond_pickaxe{Enchantments:[{id:\"minecraft:efficiency\",lvl:5s},{id:\"minecraft:fortune\",lvl:3s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
+          - "p give %player% 10"
           - "eco give %player% 10000"
       3:
         name: "Создай свой дом"
@@ -62,6 +67,7 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fАлмазный меч &7(Острота V, Прочность III)"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×11"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×10 500"
         icon: RED_BED
         type: COMMAND_TRIGGER
@@ -69,6 +75,7 @@ levels:
         amount: 1
         rewards:
           - "minecraft:give %player% diamond_sword{Enchantments:[{id:\"minecraft:sharpness\",lvl:5s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
+          - "p give %player% 11"
           - "eco give %player% 10500"
       4:
         name: "Пригласи в дом"
@@ -78,6 +85,7 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fАлмазные ботинки &7(Защита IV, Невесомость IV)"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×11"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×10 500"
         icon: OAK_DOOR
         type: COMMAND_TRIGGER
@@ -85,6 +93,7 @@ levels:
         amount: 1
         rewards:
           - "minecraft:give %player% diamond_boots{Enchantments:[{id:\"minecraft:protection\",lvl:4s},{id:\"minecraft:feather_falling\",lvl:4s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
+          - "p give %player% 11"
           - "eco give %player% 10500"
       5:
         name: "Посети варп"
@@ -94,12 +103,14 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fАлмазные поножи &7(Защита IV, Прочность III)"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×11"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×11 000"
         icon: ENDER_PEARL
         type: WARP_TELEPORT
         amount: 1
         rewards:
           - "minecraft:give %player% diamond_leggings{Enchantments:[{id:\"minecraft:protection\",lvl:4s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
+          - "p give %player% 11"
           - "eco give %player% 11000"
       6:
         name: "Загляни за бесплатной наградой"
@@ -109,6 +120,7 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fАлмазный топор &7(Острота V, Эффективность V, Прочность III)"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×12"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×11 000"
         icon: CHEST
         type: COMMAND_TRIGGER
@@ -116,6 +128,7 @@ levels:
         amount: 1
         rewards:
           - "minecraft:give %player% diamond_axe{Enchantments:[{id:\"minecraft:sharpness\",lvl:5s},{id:\"minecraft:efficiency\",lvl:5s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
+          - "p give %player% 12"
           - "eco give %player% 11000"
       7:
         name: "Первая победа"
@@ -125,6 +138,7 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fАлмазный нагрудник &7(Защита IV, Прочность III)"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×12"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×11 500"
         icon: IRON_SWORD
         type: KILL_MOB
@@ -132,6 +146,7 @@ levels:
         amount: 3
         rewards:
           - "minecraft:give %player% diamond_chestplate{Enchantments:[{id:\"minecraft:protection\",lvl:4s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
+          - "p give %player% 12"
           - "eco give %player% 11500"
       8:
         name: "PvP на арене"
@@ -142,6 +157,7 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fНезеритовый меч &7(Острота V, Заговор огня II, Прочность III)"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×13"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×12 000"
         icon: DIAMOND_SWORD
         type: KILL_PLAYER_UNIQUE
@@ -149,6 +165,7 @@ levels:
         amount: 1
         rewards:
           - "minecraft:give %player% netherite_sword{Enchantments:[{id:\"minecraft:sharpness\",lvl:5s},{id:\"minecraft:fire_aspect\",lvl:2s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
+          - "p give %player% 13"
           - "eco give %player% 12000"
       9:
         name: "Запас камня"
@@ -158,6 +175,7 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fНезеритовая кирка &7(Эффективность V, Удача III, Прочность III)"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×14"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×12 500"
         icon: IRON_PICKAXE
         type: BREAK_BLOCK
@@ -165,6 +183,7 @@ levels:
         amount: 32
         rewards:
           - "minecraft:give %player% netherite_pickaxe{Enchantments:[{id:\"minecraft:efficiency\",lvl:5s},{id:\"minecraft:fortune\",lvl:3s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
+          - "p give %player% 14"
           - "eco give %player% 12500"
       10:
         name: "Привязка аккаунта"
@@ -176,6 +195,7 @@ levels:
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fНезеритовый нагрудник &7(Защита IV, Прочность III)"
           - "&#F8BEFB&l┃ &7● &fНезеритовый слиток &7×2"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×15"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×15 000"
         icon: NAME_TAG
         type: ACCOUNT_LINK
@@ -183,6 +203,7 @@ levels:
         rewards:
           - "minecraft:give %player% netherite_chestplate{Enchantments:[{id:\"minecraft:protection\",lvl:4s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
           - "minecraft:give %player% netherite_ingot 2"
+          - "p give %player% 15"
           - "eco give %player% 15000"
   2:
     name: "Вызов"
@@ -193,6 +214,7 @@ levels:
         - "minecraft:give %player% netherite_chestplate{Enchantments:[{id:\"minecraft:protection\",lvl:4s},{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:mending\",lvl:1s}]} 1"
         - "minecraft:give %player% elytra{Enchantments:[{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:mending\",lvl:1s}]} 1"
         - "minecraft:give %player% netherite_ingot 8"
+        - "p give %player% 50"
         - "eco give %player% 50000"
     quests:
       1:
@@ -203,12 +225,14 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fНезеритовые ботинки &7(Защита IV, Невесомость IV, Скорость душ III, Прочность III)"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×12"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×12 000"
         icon: GOLD_INGOT
         type: CASINO_WIN
         amount: 1
         rewards:
           - "minecraft:give %player% netherite_boots{Enchantments:[{id:\"minecraft:protection\",lvl:4s},{id:\"minecraft:feather_falling\",lvl:4s},{id:\"minecraft:soul_speed\",lvl:3s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
+          - "p give %player% 12"
           - "eco give %player% 12000"
       2:
         name: "Задание боевого пропуска"
@@ -217,12 +241,14 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fНезеритовый шлем &7(Защита IV, Подводное дыхание III, Подводник I, Прочность III)"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×12"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×12 000"
         icon: BOOK
         type: BATTLEPASS_COMPLETE
         amount: 1
         rewards:
           - "minecraft:give %player% netherite_helmet{Enchantments:[{id:\"minecraft:protection\",lvl:4s},{id:\"minecraft:respiration\",lvl:3s},{id:\"minecraft:aqua_affinity\",lvl:1s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
+          - "p give %player% 12"
           - "eco give %player% 12000"
       3:
         name: "Морской маршрут"
@@ -232,12 +258,14 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fТрезубец &7(Тягун III, Прочность III, Починка)"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×13"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×12 500"
         icon: TRIDENT
         type: SWIM_DISTANCE
         amount: 250
         rewards:
           - "minecraft:give %player% trident{Enchantments:[{id:\"minecraft:riptide\",lvl:3s},{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:mending\",lvl:1s}]} 1"
+          - "p give %player% 13"
           - "eco give %player% 12500"
       4:
         name: "Свой железный инструмент"
@@ -247,6 +275,7 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fНезеритовая кирка &7(Эффективность V, Удача III, Прочность III, Починка)"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×13"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×13 000"
         icon: IRON_PICKAXE
         type: CRAFT_ITEM
@@ -254,6 +283,7 @@ levels:
         amount: 1
         rewards:
           - "minecraft:give %player% netherite_pickaxe{Enchantments:[{id:\"minecraft:efficiency\",lvl:5s},{id:\"minecraft:fortune\",lvl:3s},{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:mending\",lvl:1s}]} 1"
+          - "p give %player% 13"
           - "eco give %player% 13000"
       5:
         name: "Достойный соперник"
@@ -263,12 +293,14 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fНезеритовый меч &7(Острота V, Заговор огня II, Добыча III, Прочность III)"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×14"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×13 500"
         icon: DIAMOND_SWORD
         type: COMBAT_PLAYER_UNIQUE
         amount: 3
         rewards:
           - "minecraft:give %player% netherite_sword{Enchantments:[{id:\"minecraft:sharpness\",lvl:5s},{id:\"minecraft:fire_aspect\",lvl:2s},{id:\"minecraft:looting\",lvl:3s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
+          - "p give %player% 14"
           - "eco give %player% 13500"
       6:
         name: "Адский путь"
@@ -278,12 +310,14 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fНезеритовые поножи &7(Защита IV, Прочность III)"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×14"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×13 000"
         icon: NETHERRACK
         type: NETHER_TRAVEL_DISTANCE
         amount: 500
         rewards:
           - "minecraft:give %player% netherite_leggings{Enchantments:[{id:\"minecraft:protection\",lvl:4s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
+          - "p give %player% 14"
           - "eco give %player% 13000"
       7:
         name: "Цветочная коллекция"
@@ -293,12 +327,14 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fНезеритовый нагрудник &7(Защита IV, Прочность III, Починка)"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×14"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×13 500"
         icon: OXEYE_DAISY
         type: COLLECT_FLOWERS
         amount: 4
         rewards:
           - "minecraft:give %player% netherite_chestplate{Enchantments:[{id:\"minecraft:protection\",lvl:4s},{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:mending\",lvl:1s}]} 1"
+          - "p give %player% 14"
           - "eco give %player% 13500"
       8:
         name: "Торговец на аукционе"
@@ -309,6 +345,7 @@ levels:
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fНезеритовый слиток &7×4"
           - "&#F8BEFB&l┃ &7● &fАлмаз &7×8"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×15"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×14 000"
         icon: EMERALD
         type: AUCTION_SELL
@@ -316,6 +353,7 @@ levels:
         rewards:
           - "minecraft:give %player% netherite_ingot 4"
           - "minecraft:give %player% diamond 8"
+          - "p give %player% 15"
           - "eco give %player% 14000"
       9:
         name: "Первое зачарование"
@@ -325,12 +363,14 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fНезеритовый шлем &7(Защита IV, Прочность III, Починка)"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×15"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×14 500"
         icon: ENCHANTING_TABLE
         type: ENCHANT_ITEM
         amount: 1
         rewards:
           - "minecraft:give %player% netherite_helmet{Enchantments:[{id:\"minecraft:protection\",lvl:4s},{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:mending\",lvl:1s}]} 1"
+          - "p give %player% 15"
           - "eco give %player% 14500"
       10:
         name: "Час в игре"
@@ -341,6 +381,7 @@ levels:
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7● &fНезеритовая кирка &7(Эффективность V, Удача III, Прочность III, Починка)"
           - "&#F8BEFB&l┃ &7● &fНезеритовый слиток &7×4"
+          - "&#F8BEFB&l┃ &7● &fКоины &7×15"
           - "&#F8BEFB&l┃ &7● &fМонеты &7×15 000"
         icon: GOLD_NUGGET
         type: PLAYTIME
@@ -348,4 +389,5 @@ levels:
         rewards:
           - "minecraft:give %player% netherite_pickaxe{Enchantments:[{id:\"minecraft:efficiency\",lvl:5s},{id:\"minecraft:fortune\",lvl:3s},{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:mending\",lvl:1s}]} 1"
           - "minecraft:give %player% netherite_ingot 4"
+          - "p give %player% 15"
           - "eco give %player% 15000"

@@ -65,10 +65,7 @@ public class QuestManager {
             if (levelSec == null) continue;
 
             String levelName = levelSec.getString("name", "Level " + levelId);
-            List<String> megaCommands = levelSec.getStringList("mega-reward.commands");
-            String megaMessage = levelSec.getString("mega-reward.message", "");
-
-            QuestLevel level = new QuestLevel(levelId, levelName, megaCommands, megaMessage);
+            QuestLevel level = new QuestLevel(levelId, levelName);
 
             ConfigurationSection questsSec = levelSec.getConfigurationSection("quests");
             if (questsSec != null) {
@@ -582,21 +579,10 @@ public class QuestManager {
 
         if (isLevelFullyClaimedExceptMega(data, level.getId()) && !data.isMegaClaimed(level.getId())) {
             data.setMegaClaimed(level.getId(), true);
-            List<String> megaCommands = level.getMegaRewardCommands();
-            if (megaCommands != null && !megaCommands.isEmpty()) {
-                plugin.getRewardManager().giveRewards(player, megaCommands);
-            }
 
             Map<String, String> levelPh = new HashMap<>();
             levelPh.put("level", ColorUtils.colorize(level.getName()));
-            String customMessage = level.getMegaRewardMessage();
-            if (customMessage != null && !customMessage.trim().isEmpty()) {
-                player.sendMessage(ColorUtils.colorize(customMessage.replace("%level%", level.getName())));
-            } else {
-                String messageKey = megaCommands == null || megaCommands.isEmpty()
-                        ? "level-completed-no-reward" : "level-completed";
-                player.sendMessage(plugin.getConfigManager().getMessage(messageKey, levelPh));
-            }
+            player.sendMessage(plugin.getConfigManager().getMessage("level-completed-no-reward", levelPh));
             playSound(player, "level-completed");
             plugin.getDao().saveMega(player.getUniqueId(), level.getId(), true);
 

@@ -6,9 +6,7 @@
 # Для ванильных предметов используй minecraft:give. p give начисляет коины,
 # eco give выдаёт монеты; case, kit, shadowci и elytrixitem — серверные награды.
 #
-# У каждого уровня может быть бонус за полное прохождение:
-#   mega-reward.commands — команды выдачи бонуса (необязательно)
-#   mega-reward.message  — свой текст (необязательно, %level%)
+# За полное прохождение уровня отдельная мега-награда не выдаётся.
 #
 # После выполнения задания его награда засчитывается автоматически.
 # Следующее задание открывается сразу, без повторного клика по прошлому.
@@ -17,12 +15,6 @@
 levels:
   1:
     name: "Знакомства"
-    mega-reward:
-      commands:
-        - "minecraft:give %player% netherite_sword{Enchantments:[{id:\"minecraft:sharpness\",lvl:5s},{id:\"minecraft:looting\",lvl:3s},{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:mending\",lvl:1s}]} 1"
-        - "minecraft:give %player% netherite_ingot 4"
-        - "p give %player% 25"
-        - "eco give %player% 25000"
     quests:
       1:
         name: "Изучи меню помощи"
@@ -31,12 +23,14 @@ levels:
           - "&#F8BEFB&l┃ &fКоманда: &#F8BEFB/помощь"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
+          - "&#F8BEFB&l┃ &#F8BEFBКоинов &f20"
           - "&#F8BEFB&l┃ &#F8BEFBБесплатный кейс &fx1"
         icon: PAPER
         type: COMMAND_TRIGGER
         trigger: "помощь"
         amount: 1
         rewards:
+          - "p give %player% 20"
           - "case give %player% donfree 1"
       2:
         name: "Запривать территорию"
@@ -45,14 +39,14 @@ levels:
           - "&#F8BEFB&l┃ &fКоманда: &#F8BEFB/rg claim [название]"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &fАлмазный блок &7×1"
-          - "&#F8BEFB&l┃ &#F8BEFBКоинов &f20"
+          - "&#F8BEFB&l┃ &f10 000 &#F8BEFBМонет"
+          - "&#F8BEFB&l┃ &fАлмазный шлем &7(Защита IV, Прочность III)"
         icon: WOODEN_AXE
         type: REGION_CLAIM
         amount: 1
         rewards:
-          - "minecraft:give %player% diamond_block 1"
-          - "p give %player% 20"
+          - "eco give %player% 10000"
+          - "minecraft:give %player% diamond_helmet{Enchantments:[{id:\"minecraft:protection\",lvl:4s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
       3:
         name: "Создай свой дом"
         lore:
@@ -60,19 +54,13 @@ levels:
           - "&#F8BEFB&l┃ &fКоманда: &#F8BEFB/sethome [название]"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &fАлмазы &7×16"
-          - "&#F8BEFB&l┃ &fИзумруды &7×8"
-          - "&#F8BEFB&l┃ &#F8BEFBКоинов &f40"
-          - "&#F8BEFB&l┃ &f10 000 &#F8BEFBМонет"
+          - "&#F8BEFB&l┃ &#F8BEFBКоинов &f30"
         icon: RED_BED
         type: COMMAND_TRIGGER
         trigger: "sethome"
         amount: 1
         rewards:
-          - "minecraft:give %player% diamond 16"
-          - "minecraft:give %player% emerald 8"
-          - "p give %player% 40"
-          - "eco give %player% 10000"
+          - "p give %player% 30"
       4:
         name: "Пригласи в дом"
         lore:
@@ -96,16 +84,14 @@ levels:
           - "&#F8BEFB&l┃ &fКоманда: &#F8BEFB/warp"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &fАлмазный меч &7(Острота V, Прочность III)"
-          - "&#F8BEFB&l┃ &fАлмазы &7×8"
-          - "&#F8BEFB&l┃ &#F8BEFBКоинов &f20"
+          - "&#F8BEFB&l┃ &#F8BEFBБесплатный кейс &fx1"
+          - "&#F8BEFB&l┃ &#F8BEFBКоинов &f10"
         icon: ENDER_PEARL
         type: WARP_TELEPORT
         amount: 1
         rewards:
-          - "minecraft:give %player% diamond_sword{Enchantments:[{id:\"minecraft:sharpness\",lvl:5s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
-          - "minecraft:give %player% diamond 8"
-          - "p give %player% 20"
+          - "case give %player% donfree 1"
+          - "p give %player% 10"
       6:
         name: "Загляни за бесплатной наградой"
         lore:
@@ -113,64 +99,58 @@ levels:
           - "&#F8BEFB&l┃ &fКоманда: &#F8BEFB/free"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &7« &#F8BEFBШар Змеи &7» &fx1"
-          - "&#F8BEFB&l┃ &fНезеритовый меч &7(Острота V)"
+          - "&#F8BEFB&l┃ &#F8BEFBКоинов &f20"
         icon: CHEST
         type: COMMAND_TRIGGER
         trigger: "free"
         amount: 1
         rewards:
-          - "shadowci give %player% shar2"
-          - "minecraft:give %player% netherite_sword{Enchantments:[{id:\"minecraft:sharpness\",lvl:5s}]} 1"
+          - "p give %player% 20"
       7:
-        name: "Первая победа"
+        name: "Кит привилегии"
         lore:
-          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBПобеди 3 зомби"
-          - "&#F8BEFB&l┃ &fЦель: &#F8BEFBОбычные зомби"
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBПолучи кит своего доната"
+          - "&#F8BEFB&l┃ &fЕсли кит на КД: &#F8BEFBЗачтётся автоматически"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &fНезеритовая кирка &7(Эффективность V)"
-        icon: IRON_SWORD
-        type: KILL_MOB
-        entity: ZOMBIE
-        amount: 3
+          - "&#F8BEFB&l┃ &fНезеритовая кирка &7(Острота V, Эффективность V)"
+        icon: "IRON_SWORD"
+        type: "KIT_CLAIM"
+        amount: 1
         rewards:
-          - "minecraft:give %player% netherite_pickaxe{Enchantments:[{id:\"minecraft:efficiency\",lvl:5s}]} 1"
+          - "minecraft:give %player% netherite_pickaxe{Enchantments:[{id:\"minecraft:sharpness\",lvl:5s},{id:\"minecraft:efficiency\",lvl:5s}]} 1"
       8:
         name: "PvP на арене"
         lore:
-          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBПобеди 1 игрока"
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBУбей 3 разных игроков"
           - "&#F8BEFB&l┃ &fГде: &#F8BEFB/warp pvp"
-          - "&#F8BEFB&l┃ &fПовторные победы над тем же игроком не считаются"
+          - "&#F8BEFB&l┃ &fПовторные убийства: &#F8BEFBНе засчитываются"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &#F8BEFBКит &#FF3030&lɪ&#FF3A3A&lᴍ&#FF4444&lᴍ&#FF4E4E&lᴏ&#FF5757&lʀ&#FF6161&lᴛ&#FF6B6B&lᴀ&#FF7575&lʟ"
-          - "&#F8BEFB&l┃ &fКнига &7« &6Солнечные оковы &7» &fx1"
-          - "&#F8BEFB&l┃ &fАлмазный блок &7×2"
+          - "&#F8BEFB&l┃ &7« &#F8BEFBШар Новичка &7» &fx1"
+          - "&#F8BEFB&l┃ &fЗолотые яблоки &7×2"
+          - "&#F8BEFB&l┃ &#F8BEFBКоинов &f40"
         icon: DIAMOND_SWORD
         type: KILL_PLAYER_UNIQUE
         region: "pvp"
-        amount: 1
+        amount: 3
         rewards:
-          - "kit give immortal %player%"
-          - "elytrixitem:ei give %player% enchant_sun_shackles 1"
-          - "minecraft:give %player% diamond_block 2"
+          - "shadowci give %player% shar1"
+          - "minecraft:give %player% golden_apple 2"
+          - "p give %player% 40"
       9:
-        name: "Запас камня"
+        name: "Тотем бессмертия"
         lore:
-          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBДобудь 32 блока булыжника"
-          - "&#F8BEFB&l┃ &fПредмет: &#F8BEFBБулыжник"
+          - "&#F8BEFB&l┃ &fЗадание: &#F8BEFBИспользуй 5 тотемов"
+          - "&#F8BEFB&l┃ &fПредмет: &#F8BEFBTotem of Undying"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &#F8BEFBКоин Кейс &fx1"
           - "&#F8BEFB&l┃ &fНезеритовые слитки &7×2"
           - "&#F8BEFB&l┃ &fАлмазный блок &7×1"
-        icon: IRON_PICKAXE
-        type: BREAK_BLOCK
-        material: COBBLESTONE
-        amount: 32
+        icon: "TOTEM_OF_UNDYING"
+        type: "USE_TOTEM"
+        amount: 5
         rewards:
-          - "case give %player% coins 1"
           - "minecraft:give %player% netherite_ingot 2"
           - "minecraft:give %player% diamond_block 1"
       10:
@@ -182,29 +162,19 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &fНезеритовый нагрудник &7(Защита IV, Прочность III)"
-          - "&#F8BEFB&l┃ &fНезеритовые слитки &7×4"
-          - "&#F8BEFB&l┃ &7« &#F8BEFBШар Солнца &7» &fx2"
-          - "&#F8BEFB&l┃ &f30 000 &#F8BEFBМонет"
+          - "&#F8BEFB&l┃ &fНезеритовые слитки &7×2"
+          - "&#F8BEFB&l┃ &7« &#F8BEFBШар Змеи &7» &fx1"
+          - "&#F8BEFB&l┃ &f20 000 &#F8BEFBМонет"
         icon: NAME_TAG
         type: ACCOUNT_LINK
         amount: 1
         rewards:
           - "minecraft:give %player% netherite_chestplate{Enchantments:[{id:\"minecraft:protection\",lvl:4s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
-          - "minecraft:give %player% netherite_ingot 4"
-          - "shadowci give %player% shar3"
-          - "shadowci give %player% shar3"
-          - "eco give %player% 30000"
+          - "minecraft:give %player% netherite_ingot 2"
+          - "shadowci give %player% shar2"
+          - "eco give %player% 20000"
   2:
     name: "Вызов"
-    mega-reward:
-      commands:
-        - "minecraft:give %player% netherite_sword{Enchantments:[{id:\"minecraft:sharpness\",lvl:5s},{id:\"minecraft:fire_aspect\",lvl:2s},{id:\"minecraft:looting\",lvl:3s},{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:mending\",lvl:1s}]} 1"
-        - "minecraft:give %player% netherite_pickaxe{Enchantments:[{id:\"minecraft:efficiency\",lvl:5s},{id:\"minecraft:fortune\",lvl:3s},{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:mending\",lvl:1s}]} 1"
-        - "minecraft:give %player% netherite_chestplate{Enchantments:[{id:\"minecraft:protection\",lvl:4s},{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:mending\",lvl:1s}]} 1"
-        - "minecraft:give %player% elytra{Enchantments:[{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:mending\",lvl:1s}]} 1"
-        - "minecraft:give %player% netherite_ingot 8"
-        - "p give %player% 50"
-        - "eco give %player% 50000"
     quests:
       1:
         name: "Удача в казино"
@@ -350,17 +320,15 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7« &#F8BEFBШар Солнца &7» &fx1"
-          - "&#F8BEFB&l┃ &#F8BEFBКоинов &f40"
-          - "&#F8BEFB&l┃ &fИзумрудные блоки &7×4"
-          - "&#F8BEFB&l┃ &fАлмазные блоки &7×2"
+          - "&#F8BEFB&l┃ &#F8BEFBКоинов &f30"
+          - "&#F8BEFB&l┃ &fИзумрудные блоки &7×2"
         icon: ENCHANTING_TABLE
         type: ENCHANT_ITEM
         amount: 1
         rewards:
           - "shadowci give %player% shar3"
-          - "p give %player% 40"
-          - "minecraft:give %player% emerald_block 4"
-          - "minecraft:give %player% diamond_block 2"
+          - "p give %player% 30"
+          - "minecraft:give %player% emerald_block 2"
       10:
         name: "Час в игре"
         lore:
@@ -368,20 +336,15 @@ levels:
           - "&#F8BEFB&l┃ &fВремя засчитывается после начала задания"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &#F8BEFBКит &#FF7AFE&lᴅ&#FF81FB&lʀ&#FF88F7&lᴀ&#FF90F4&lɢ&#FF97F0&lᴏ&#FF9EED&lɴ"
-          - "&#F8BEFB&l┃ &7« &#F8BEFBШар Солнца &7» &fx2"
           - "&#F8BEFB&l┃ &fЭлитры &7(Прочность III, Починка)"
-          - "&#F8BEFB&l┃ &fНезеритовые слитки &7×8"
-          - "&#F8BEFB&l┃ &#F8BEFBКоинов &f80"
-          - "&#F8BEFB&l┃ &f100 000 &#F8BEFBМонет"
+          - "&#F8BEFB&l┃ &fНезеритовые слитки &7×2"
+          - "&#F8BEFB&l┃ &#F8BEFBКоинов &f30"
+          - "&#F8BEFB&l┃ &f30 000 &#F8BEFBМонет"
         icon: GOLD_NUGGET
         type: PLAYTIME
         amount: 30
         rewards:
-          - "kit give dragon %player%"
-          - "shadowci give %player% shar3"
-          - "shadowci give %player% shar3"
           - "minecraft:give %player% elytra{Enchantments:[{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:mending\",lvl:1s}]} 1"
-          - "minecraft:give %player% netherite_ingot 8"
-          - "p give %player% 80"
-          - "eco give %player% 100000"
+          - "minecraft:give %player% netherite_ingot 2"
+          - "p give %player% 30"
+          - "eco give %player% 30000"

@@ -40,6 +40,7 @@ gui:
   animation:
     enabled: true
     delay: 1
+    items-per-tick: 1
     sound: BLOCK_NOTE_BLOCK_PLING
 
 sounds:

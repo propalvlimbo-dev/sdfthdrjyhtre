@@ -23,7 +23,7 @@ public class PlayerJoinListener implements Listener {
                 Bukkit.getScheduler().runTask(plugin, () -> {
                     if (!player.isOnline()) return;
                     plugin.getQuestManager().cache(player.getUniqueId(), data);
-                    plugin.getQuestManager().recoverPendingRewards(player);
+                    plugin.getQuestManager().discardLegacyCompletedRewards(player);
                     plugin.getQuestManager().incrementProgress(player, QuestType.JOIN_SERVER, q -> true, 1);
                 })).exceptionally(exception -> {
             plugin.getLogger().severe("Не удалось загрузить данные игрока " + player.getName() + ": "

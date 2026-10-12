@@ -139,20 +139,47 @@ public class QuestManager {
         return cache.get(uuid);
     }
 
-    /** Claims legacy COMPLETED entries on load so old players never need to click them again. */
-    public void recoverPendingRewards(Player player) {
+    /**
+     * Migrates old COMPLETED entries to CLAIMED without replaying their rewards.
+     * These quests were finished before the auto-claim update.
+     */
+    public void discardLegacyCompletedRewards(Player player) {
         if (player == null || !player.isOnline()) return;
         PlayerQuestData data = cache.get(player.getUniqueId());
         if (data == null) return;
 
+        boolean migratedLegacyCompletion = false;
         for (QuestLevel level : levels.values()) {
             for (Quest quest : level.getQuests().values()) {
                 QuestEntry entry = data.getEntry(level.getId(), quest.getId());
-                if (entry == null || entry.getStatus() != QuestStatus.COMPLETED) continue;
-                data.setCooldownUntil(level.getId(), quest.getId(), 0L);
-                claimReward(player, data, level, quest, entry);
+                if (entry != null && entry.getStatus() == QuestStatus.COMPLETED) {
+                    markLegacyCompletionClaimed(player, data, level, quest, entry);
+                    migratedLegacyCompletion = true;
+                }
             }
         }
+
+        if (migratedLegacyCompletion) {
+            player.sendMessage(plugin.getConfigManager().getMessage("legacy-completion-no-reward"));
+        }
+
+        // Old builds could leave a fully finished level without its mega flag.
+        // Mark it finished without issuing a retroactive level bonus.
+        for (QuestLevel level : levels.values()) {
+            if (!data.isMegaClaimed(level.getId()) && isLevelFullyClaimedExceptMega(data, level.getId())) {
+                data.setMegaClaimed(level.getId(), true);
+                plugin.getDao().saveMega(player.getUniqueId(), level.getId(), true);
+            }
+        }
+    }
+
+    private void markLegacyCompletionClaimed(Player player, PlayerQuestData data, QuestLevel level,
+                                              Quest quest, QuestEntry entry) {
+        entry.setStatus(QuestStatus.CLAIMED);
+        entry.setProgress(Math.max(entry.getProgress(), quest.getAmount()));
+        data.setCooldownUntil(level.getId(), quest.getId(), 0L);
+        plugin.getDao().saveProgress(player.getUniqueId(), level.getId(), quest.getId(),
+                entry.getStatus(), entry.getProgress(), 0L);
     }
 
     public void unload(UUID uuid) {
@@ -171,7 +198,7 @@ public class QuestManager {
                     Bukkit.getScheduler().runTask(plugin, () -> {
                         if (!player.isOnline()) return;
                         cache(uuid, data);
-                        recoverPendingRewards(player);
+                        discardLegacyCompletedRewards(player);
                     }));
         }
     }

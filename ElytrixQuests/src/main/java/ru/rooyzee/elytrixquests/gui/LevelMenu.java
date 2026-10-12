@@ -45,16 +45,11 @@ public class LevelMenu implements InventoryHolder {
     }
 
     public void open() {
-        Map<Integer, ItemStack> questItems = createQuestItems();
-        buildFrame();
-
-        ItemStack placeholder = ItemBuilder.filler(Material.MAGENTA_STAINED_GLASS_PANE);
-        for (Integer slot : questItems.keySet()) {
-            inventory.setItem(slot, placeholder);
-        }
-
+        build();
+        Map<Integer, ItemStack> menuItems = animator.snapshot(inventory);
+        inventory.clear();
         player.openInventory(inventory);
-        animator.animate(player, inventory, questItems, this::build);
+        animator.animate(player, inventory, menuItems, this::build);
     }
 
     public void build() {

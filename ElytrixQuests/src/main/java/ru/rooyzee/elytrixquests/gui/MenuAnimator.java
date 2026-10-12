@@ -11,6 +11,7 @@ import ru.rooyzee.elytrixquests.Main;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -28,6 +29,18 @@ public final class MenuAnimator {
 
     public boolean isRunning() {
         return running;
+    }
+
+    /** Copies every occupied slot so static glass and buttons animate with the menu contents. */
+    public Map<Integer, ItemStack> snapshot(Inventory inventory) {
+        Map<Integer, ItemStack> items = new LinkedHashMap<>();
+        for (int slot = 0; slot < inventory.getSize(); slot++) {
+            ItemStack item = inventory.getItem(slot);
+            if (item != null) {
+                items.put(slot, item.clone());
+            }
+        }
+        return items;
     }
 
     public void animate(final Player player, final Inventory inventory,
@@ -49,7 +62,9 @@ public final class MenuAnimator {
         }
 
         final int delay = Math.max(1, plugin.getConfig().getInt("gui.animation.delay", 1));
-        final int itemsPerTick = items.size() > 20 ? 2 : 1;
+        final int defaultItemsPerTick = items.size() > 20 ? 2 : 1;
+        final int itemsPerTick = Math.max(1,
+                plugin.getConfig().getInt("gui.animation.items-per-tick", defaultItemsPerTick));
         final Sound sound = getAnimationSound();
         running = true;
 

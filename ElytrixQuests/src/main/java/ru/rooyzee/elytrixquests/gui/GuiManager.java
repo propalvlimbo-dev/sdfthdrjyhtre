@@ -35,7 +35,7 @@ public class GuiManager {
                     if (!player.isOnline()) return;
 
                     plugin.getQuestManager().cache(player.getUniqueId(), loaded);
-                    plugin.getQuestManager().recoverPendingRewards(player);
+                    plugin.getQuestManager().discardLegacyCompletedRewards(player);
 
                     if (player.getOpenInventory() == null) return;
                     Object holder = player.getOpenInventory().getTopInventory().getHolder();

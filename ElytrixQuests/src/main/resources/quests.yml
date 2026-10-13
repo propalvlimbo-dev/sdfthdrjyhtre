@@ -8,8 +8,8 @@
 #
 # За полное прохождение уровня отдельная мега-награда не выдаётся.
 #
-# После выполнения задания его награда засчитывается автоматически.
-# Следующее задание открывается сразу, без повторного клика по прошлому.
+# Награда за выполненное задание выдаётся автоматически.
+# Следующее задание открывается через 3 минуты; повторно нажимать прошлое не нужно.
 # =============================================================
 
 levels:
@@ -225,15 +225,13 @@ levels:
           - "&#F8BEFB&l┃ &fПредмет: &#F8BEFBSpawner"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &fАлмазная кирка &7(Эффективность IV, Прочность III)"
-          - "&#F8BEFB&l┃ &fЗолотые яблоки &7×2"
+          - "&#F8BEFB&l┃ &fЗолотые яблоки &7×16"
           - "&#F8BEFB&l┃ &#F8BEFBКоинов &f20"
         icon: SPAWNER
         type: PLACE_SPAWNER
         amount: 1
         rewards:
-          - "minecraft:give %player% diamond_pickaxe{Enchantments:[{id:\"minecraft:efficiency\",lvl:4s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
-          - "minecraft:give %player% golden_apple 2"
+          - "minecraft:give %player% golden_apple 16"
           - "p give %player% 20"
       5:
         name: "Десять соперников"
@@ -244,15 +242,11 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7« &#F8BEFBШар Змеи &7» &fx1"
-          - "&#F8BEFB&l┃ &fЗолотые яблоки &7×2"
-          - "&#F8BEFB&l┃ &fСтрелы &7×16"
         icon: DIAMOND_SWORD
         type: COMBAT_PLAYER_UNIQUE
         amount: 10
         rewards:
           - "shadowci give %player% shar2"
-          - "minecraft:give %player% golden_apple 2"
-          - "minecraft:give %player% arrow 16"
       6:
         name: "Адский путь"
         lore:
@@ -261,14 +255,14 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &fЗелья огнестойкости &7×2"
-          - "&#F8BEFB&l┃ &fЭндер-жемчуг &7×4"
+          - "&#F8BEFB&l┃ &fЭндер-жемчуг &7×16"
           - "&#F8BEFB&l┃ &#F8BEFBКоинов &f30"
         icon: NETHERRACK
         type: NETHER_TRAVEL_DISTANCE
         amount: 2500
         rewards:
           - "minecraft:give %player% potion{Potion:\"minecraft:fire_resistance\"} 2"
-          - "minecraft:give %player% ender_pearl 4"
+          - "minecraft:give %player% ender_pearl 16"
           - "p give %player% 30"
       7:
         name: "Цветочная коллекция"
@@ -277,16 +271,12 @@ levels:
           - "&#F8BEFB&l┃ &fВсе цветы должны находиться в инвентаре"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &fАлмазный нагрудник &7(Защита III, Прочность III)"
-          - "&#F8BEFB&l┃ &fЗолотое яблоко &7×1"
-          - "&#F8BEFB&l┃ &#F8BEFBКоинов &f20"
+          - "&#F8BEFB&l┃ &#F8BEFBКоинов &f50"
         icon: OXEYE_DAISY
         type: COLLECT_FLOWERS
         amount: 8
         rewards:
-          - "minecraft:give %player% diamond_chestplate{Enchantments:[{id:\"minecraft:protection\",lvl:3s},{id:\"minecraft:unbreaking\",lvl:3s}]} 1"
-          - "minecraft:give %player% golden_apple 1"
-          - "p give %player% 20"
+          - "p give %player% 50"
       8:
         name: "Торговец на аукционе"
         lore:
@@ -295,14 +285,12 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &fАнти-пёрлы &7×2"
-          - "&#F8BEFB&l┃ &fИзумруды &7×4"
           - "&#F8BEFB&l┃ &f15 000 &#F8BEFBМонет"
         icon: EMERALD
         type: AUCTION_SELL
         amount: 5
         rewards:
           - "elytrixitem:ei give %player% anti_pearl 2"
-          - "minecraft:give %player% emerald 4"
           - "eco give %player% 15000"
       9:
         name: "Шлем Солнца"
@@ -313,15 +301,11 @@ levels:
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
           - "&#F8BEFB&l┃ &7« &#F8BEFBШар Солнца &7» &fx1"
-          - "&#F8BEFB&l┃ &fЗолотые яблоки &7×2"
-          - "&#F8BEFB&l┃ &#F8BEFBКоинов &f25"
         icon: GOLDEN_HELMET
         type: CRAFT_SUN_HELMET
         amount: 1
         rewards:
           - "shadowci give %player% shar3"
-          - "minecraft:give %player% golden_apple 2"
-          - "p give %player% 25"
       10:
         name: "Первый капитал"
         lore:
@@ -329,13 +313,11 @@ levels:
           - "&#F8BEFB&l┃ &fБаланс PlayerPoints: &#F8BEFB500 или больше"
           - "&#F8BEFB&l┃ "
           - "&#F8BEFB&l┃ &fНаграда:"
-          - "&#F8BEFB&l┃ &fНезеритовые слитки &7×2"
-          - "&#F8BEFB&l┃ &fВзрывные ловушки &7×2"
-          - "&#F8BEFB&l┃ &f20 000 &#F8BEFBМонет"
+          - "&#F8BEFB&l┃ &fВзрывные ловушки &7×6"
+          - "&#F8BEFB&l┃ &f50 000 &#F8BEFBМонет"
         icon: GOLD_NUGGET
         type: MONEY_BALANCE
         amount: 500
         rewards:
-          - "minecraft:give %player% netherite_ingot 2"
-          - "elytrixitem:ei give %player% explosive_trap 2"
-          - "eco give %player% 20000"
+          - "elytrixitem:ei give %player% explosive_trap 6"
+          - "eco give %player% 50000"

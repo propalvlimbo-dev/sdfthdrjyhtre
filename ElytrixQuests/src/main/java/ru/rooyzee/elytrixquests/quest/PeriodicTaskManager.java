@@ -47,13 +47,16 @@ public class PeriodicTaskManager {
         // и другие счётчики был виден без повторного клика.
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
-                if (p.getOpenInventory() != null && p.getOpenInventory().getTopInventory().getHolder()
-                        instanceof ru.rooyzee.elytrixquests.gui.LevelMenu) {
+                if (p.getOpenInventory() == null) continue;
+                Object holder = p.getOpenInventory().getTopInventory().getHolder();
+                if (holder instanceof ru.rooyzee.elytrixquests.gui.LevelMenu) {
                     ru.rooyzee.elytrixquests.gui.LevelMenu menu =
-                            (ru.rooyzee.elytrixquests.gui.LevelMenu) p.getOpenInventory().getTopInventory().getHolder();
-                    if (!menu.isAnimating()) {
-                        menu.build();
-                    }
+                            (ru.rooyzee.elytrixquests.gui.LevelMenu) holder;
+                    if (!menu.isAnimating()) menu.build();
+                } else if (holder instanceof ru.rooyzee.elytrixquests.gui.LevelsMenu) {
+                    ru.rooyzee.elytrixquests.gui.LevelsMenu menu =
+                            (ru.rooyzee.elytrixquests.gui.LevelsMenu) holder;
+                    if (!menu.isAnimating()) menu.build();
                 }
             }
         }, 10L, 10L);

@@ -39,6 +39,7 @@ public class QuestManager {
     private final Map<UUID, Double> netherDistance = new ConcurrentHashMap<>();
 
     private static final long WARP_TELEPORT_WINDOW_MS = 120_000L;
+    private static final long QUEST_COOLDOWN_MS = 180_000L;
 
     public QuestManager(Main plugin) {
         this.plugin = plugin;
@@ -215,7 +216,12 @@ public class QuestManager {
 
     public boolean isLevelUnlocked(PlayerQuestData data, int levelId) {
         if (levelId <= 1) return true;
-        return isLevelFullyClaimed(data, levelId - 1);
+        if (data == null) return false;
+
+        int previousLevelId = getPreviousLevelId(levelId);
+        if (previousLevelId < 0) return true;
+        return isLevelFullyClaimed(data, previousLevelId)
+                && getLevelCooldownRemaining(data, levelId) <= 0L;
     }
 
     public boolean isLevelFullyClaimed(PlayerQuestData data, int levelId) {
@@ -240,23 +246,21 @@ public class QuestManager {
     }
 
     public boolean isQuestUnlocked(PlayerQuestData data, int levelId, int questId) {
-        if (!isLevelUnlocked(data, levelId)) return false;
-        if (questId <= 1) return true;
+        if (data == null || !isLevelUnlocked(data, levelId)) return false;
 
         QuestLevel level = levels.get(levelId);
         if (level == null) return false;
 
-        int prevId = -1;
-        for (Integer id : level.getQuests().keySet()) {
-            if (id < questId && id > prevId) prevId = id;
+        int previousQuestId = getPreviousQuestId(level, questId);
+        if (previousQuestId < 0) {
+            return getLevelCooldownRemaining(data, levelId) <= 0L;
         }
-        if (prevId == -1) return true;
 
-        QuestEntry prev = data.getEntry(levelId, prevId);
-        if (prev == null) return false;
-        QuestStatus st = prev.getStatus();
-        if (st != QuestStatus.COMPLETED && st != QuestStatus.CLAIMED) return false;
-        return true;
+        QuestEntry previous = data.getEntry(levelId, previousQuestId);
+        if (previous == null) return false;
+        QuestStatus status = previous.getStatus();
+        if (status != QuestStatus.COMPLETED && status != QuestStatus.CLAIMED) return false;
+        return getCompletedQuestCooldownRemaining(data, levelId, previousQuestId) <= 0L;
     }
 
     public int getCurrentLevel(PlayerQuestData data) {
@@ -273,6 +277,93 @@ public class QuestManager {
             if (id > levelId && (next == null || id < next)) next = id;
         }
         return next != null ? levels.get(next) : null;
+    }
+
+    private int getPreviousLevelId(int levelId) {
+        int previous = -1;
+        for (Integer id : levels.keySet()) {
+            if (id < levelId && id > previous) previous = id;
+        }
+        return previous;
+    }
+
+    private int getLastQuestId(QuestLevel level) {
+        if (level == null || level.getQuests().isEmpty()) return -1;
+        int last = -1;
+        for (Integer id : level.getQuests().keySet()) {
+            if (id > last) last = id;
+        }
+        return last;
+    }
+
+    private int getPreviousQuestId(QuestLevel level, int questId) {
+        if (level == null) return -1;
+        int previous = -1;
+        for (Integer id : level.getQuests().keySet()) {
+            if (id < questId && id > previous) previous = id;
+        }
+        return previous;
+    }
+
+    private int getNextQuestId(int levelId, int questId) {
+        QuestLevel level = levels.get(levelId);
+        if (level == null) return -1;
+        int next = Integer.MAX_VALUE;
+        for (Integer id : level.getQuests().keySet()) {
+            if (id > questId && id < next) next = id;
+        }
+        return next == Integer.MAX_VALUE ? -1 : next;
+    }
+
+    private boolean hasNextQuest(int levelId, int questId) {
+        return getNextQuestId(levelId, questId) >= 0 || getNextLevel(levelId) != null;
+    }
+
+    private long getCooldownRemaining(PlayerQuestData data, int levelId, int questId) {
+        if (data == null || questId < 0) return 0L;
+        return Math.max(0L, data.getCooldownUntil(levelId, questId) - System.currentTimeMillis());
+    }
+
+    /** Remaining cooldown on the completion of a particular quest. */
+    public long getCompletedQuestCooldownRemaining(PlayerQuestData data, int levelId, int questId) {
+        return getCooldownRemaining(data, levelId, questId);
+    }
+
+    /** Remaining cooldown preventing the specified level from opening. */
+    public long getLevelCooldownRemaining(PlayerQuestData data, int levelId) {
+        if (data == null) return 0L;
+        int previousLevelId = getPreviousLevelId(levelId);
+        if (previousLevelId < 0) return 0L;
+        QuestLevel previousLevel = levels.get(previousLevelId);
+        int lastQuestId = getLastQuestId(previousLevel);
+        return getCooldownRemaining(data, previousLevelId, lastQuestId);
+    }
+
+    /** Remaining cooldown preventing the specified quest from becoming available. */
+    public long getQuestCooldownRemaining(PlayerQuestData data, int levelId, int questId) {
+        if (data == null) return 0L;
+        QuestLevel level = levels.get(levelId);
+        int previousQuestId = getPreviousQuestId(level, questId);
+        if (previousQuestId < 0) return getLevelCooldownRemaining(data, levelId);
+        return getCompletedQuestCooldownRemaining(data, levelId, previousQuestId);
+    }
+
+    public String formatCooldownRemaining(long remainingMs) {
+        long totalSeconds = (Math.max(0L, remainingMs) + 999L) / 1000L;
+        return String.format(Locale.ROOT, "%02d:%02d", totalSeconds / 60L, totalSeconds % 60L);
+    }
+
+    public void sendCooldownMessage(Player player, long remainingMs) {
+        if (player == null || remainingMs <= 0L) return;
+        Map<String, String> placeholders = new HashMap<>();
+        placeholders.put("time", formatCooldownRemaining(remainingMs));
+        player.sendMessage(plugin.getConfigManager().getMessage("quest-cooldown-active", placeholders));
+    }
+
+    private void sendCooldownStartedMessage(Player player, long remainingMs) {
+        Map<String, String> placeholders = new HashMap<>();
+        placeholders.put("time", formatCooldownRemaining(remainingMs));
+        player.sendMessage(plugin.getConfigManager().getMessage("quest-cooldown-started", placeholders));
     }
 
     public QuestStatus getStatus(PlayerQuestData data, int levelId, int questId) {
@@ -302,13 +393,17 @@ public class QuestManager {
         }
 
         if (!isLevelUnlocked(data, levelId)) {
-            player.sendMessage(plugin.getConfigManager().getMessage("level-locked"));
+            long cooldownRemaining = getLevelCooldownRemaining(data, levelId);
+            if (cooldownRemaining > 0L) sendCooldownMessage(player, cooldownRemaining);
+            else player.sendMessage(plugin.getConfigManager().getMessage("level-locked"));
             playSound(player, "level-locked");
             return;
         }
 
         if (!isQuestUnlocked(data, levelId, questId)) {
-            player.sendMessage(plugin.getConfigManager().getMessage("quest-locked-sequence"));
+            long cooldownRemaining = getQuestCooldownRemaining(data, levelId, questId);
+            if (cooldownRemaining > 0L) sendCooldownMessage(player, cooldownRemaining);
+            else player.sendMessage(plugin.getConfigManager().getMessage("quest-locked-sequence"));
             playSound(player, "level-locked");
             return;
         }
@@ -554,7 +649,6 @@ public class QuestManager {
 
         entry.setStatus(QuestStatus.COMPLETED);
         entry.setProgress(quest.getAmount());
-        data.setCooldownUntil(levelId, quest.getId(), 0L);
 
         QuestLevel level = levels.get(levelId);
         if (level != null) {
@@ -566,16 +660,22 @@ public class QuestManager {
     private void claimReward(Player player, PlayerQuestData data, QuestLevel level, Quest quest, QuestEntry entry) {
         if (entry.getStatus() == QuestStatus.CLAIMED) return;
 
+        long cooldownUntil = System.currentTimeMillis() + QUEST_COOLDOWN_MS;
+        data.setCooldownUntil(level.getId(), quest.getId(), cooldownUntil);
         entry.setStatus(QuestStatus.CLAIMED);
-        data.setCooldownUntil(level.getId(), quest.getId(), 0L);
         plugin.getDao().saveProgress(player.getUniqueId(), level.getId(), quest.getId(),
-                entry.getStatus(), entry.getProgress(), 0L);
+                entry.getStatus(), entry.getProgress(), cooldownUntil);
         plugin.getRewardManager().giveRewards(player, quest.getRewardCommands());
 
         Map<String, String> ph = new HashMap<>();
         ph.put("quest", ColorUtils.colorize(quest.getName()));
         player.sendMessage(plugin.getConfigManager().getMessage("reward-claimed", ph));
         playSound(player, "reward-claimed");
+
+        sendCooldownStartedMessage(player, getCompletedQuestCooldownRemaining(data, level.getId(), quest.getId()));
+        if (hasNextQuest(level.getId(), quest.getId())) {
+            scheduleCooldownReady(player, level.getId(), quest.getId(), cooldownUntil);
+        }
 
         if (isLevelFullyClaimedExceptMega(data, level.getId()) && !data.isMegaClaimed(level.getId())) {
             data.setMegaClaimed(level.getId(), true);
@@ -587,13 +687,50 @@ public class QuestManager {
             plugin.getDao().saveMega(player.getUniqueId(), level.getId(), true);
 
             QuestLevel next = getNextLevel(level.getId());
-            if (next != null) {
+            if (next != null && isLevelUnlocked(data, next.getId())) {
                 Map<String, String> nextLevelPh = new HashMap<>();
                 nextLevelPh.put("level", ColorUtils.colorize(next.getName()));
                 player.sendMessage(plugin.getConfigManager().getMessage("level-unlocked", nextLevelPh));
             }
         }
         refreshOpenMenu(player);
+    }
+
+    private void scheduleCooldownReady(final Player player, final int levelId, final int questId,
+                                       final long cooldownUntil) {
+        if (!hasNextQuest(levelId, questId)) return;
+        long delayMs = Math.max(0L, cooldownUntil - System.currentTimeMillis());
+        long delayTicks = Math.max(1L, (delayMs + 49L) / 50L);
+        final UUID playerId = player.getUniqueId();
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (!player.isOnline()) return;
+            PlayerQuestData currentData = cache.get(playerId);
+            if (currentData == null || currentData.getCooldownUntil(levelId, questId) != cooldownUntil) return;
+
+            long remaining = getCompletedQuestCooldownRemaining(currentData, levelId, questId);
+            if (remaining > 0L) {
+                scheduleCooldownReady(player, levelId, questId, cooldownUntil);
+                return;
+            }
+
+            int nextQuestId = getNextQuestId(levelId, questId);
+            if (nextQuestId >= 0) {
+                QuestEntry nextEntry = currentData.getEntry(levelId, nextQuestId);
+                if (isQuestUnlocked(currentData, levelId, nextQuestId)
+                        && (nextEntry == null || nextEntry.getStatus() != QuestStatus.CLAIMED)) {
+                    player.sendMessage(plugin.getConfigManager().getMessage("quest-cooldown-finished"));
+                }
+            } else {
+                QuestLevel next = getNextLevel(levelId);
+                if (next != null && isLevelUnlocked(currentData, next.getId())) {
+                    Map<String, String> placeholders = new HashMap<>();
+                    placeholders.put("level", ColorUtils.colorize(next.getName()));
+                    player.sendMessage(plugin.getConfigManager().getMessage("level-unlocked", placeholders));
+                }
+            }
+            refreshOpenMenu(player);
+        }, delayTicks);
     }
 
     private void refreshOpenMenu(Player player) {
@@ -885,11 +1022,6 @@ public class QuestManager {
                 }
             }
         }
-    }
-
-    /** Kept for integrations; sequential quests no longer use a cooldown. */
-    public long getQuestCooldownRemaining(PlayerQuestData data, int levelId, int questId) {
-        return 0L;
     }
 
     /** Баланс PlayerPoints для задания накопления коинов. */

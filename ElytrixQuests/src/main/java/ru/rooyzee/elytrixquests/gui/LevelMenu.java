@@ -125,15 +125,30 @@ public class LevelMenu implements InventoryHolder {
                 QuestStatus status = plugin.getQuestManager().getStatus(data, levelId, quest.getId());
                 QuestEntry entry = data.getEntry(levelId, quest.getId());
                 int progress = entry != null ? entry.getProgress() : 0;
-                items.put(QUEST_SLOTS[slotIndex], buildQuestItem(quest, status, progress));
+                long cooldownRemaining = status == QuestStatus.CLAIMED
+                        ? plugin.getQuestManager().getCompletedQuestCooldownRemaining(data, levelId, quest.getId())
+                        : plugin.getQuestManager().getQuestCooldownRemaining(data, levelId, quest.getId());
+                items.put(QUEST_SLOTS[slotIndex], buildQuestItem(quest, status, progress, cooldownRemaining));
             }
             slotIndex++;
         }
         return items;
     }
 
-    private ItemStack buildQuestItem(Quest quest, QuestStatus status, int progress) {
+    private ItemStack buildQuestItem(Quest quest, QuestStatus status, int progress, long cooldownRemaining) {
         if (status == QuestStatus.LOCKED) {
+            if (cooldownRemaining > 0L) {
+                return new ItemBuilder(Material.CLOCK)
+                        .name("&7« &eОжидание &7»")
+                        .lore(
+                                "&#F8BEFB&l┃ ",
+                                "&#F8BEFB&l┃ &fСтатус: &eПерерыв после задания",
+                                "&#F8BEFB&l┃ &fДо открытия: &#F8BEFB" + plugin.getQuestManager().formatCooldownRemaining(cooldownRemaining),
+                                "&#F8BEFB&l┃ ",
+                                "&7● &fСледующее задание откроется автоматически"
+                        )
+                        .build();
+            }
             return new ItemBuilder(Material.BARRIER)
                     .name("&7« &cЗакрыто &7»")
                     .lore(
@@ -170,7 +185,7 @@ public class LevelMenu implements InventoryHolder {
             case CLAIMED:
                 material = Material.ENCHANTED_BOOK;
                 statusText = "&aНаграда получена";
-                actionText = "&7● &fМожно переходить к следующему заданию";
+                actionText = "&7● &fНаграда выдана автоматически";
                 glow = true;
                 break;
             default:
@@ -189,6 +204,10 @@ public class LevelMenu implements InventoryHolder {
 
         if (status == QuestStatus.IN_PROGRESS) {
             lore.add("&#F8BEFB&l┃ &fПрогресс: &#F8BEFB" + progress + " &fиз &#F8BEFB" + quest.getAmount());
+        }
+        if (status == QuestStatus.CLAIMED && cooldownRemaining > 0L) {
+            lore.add("&#F8BEFB&l┃ &fПерерыв после выполнения: &#F8BEFB"
+                    + plugin.getQuestManager().formatCooldownRemaining(cooldownRemaining));
         }
 
         lore.add("&#F8BEFB&l┃ ");

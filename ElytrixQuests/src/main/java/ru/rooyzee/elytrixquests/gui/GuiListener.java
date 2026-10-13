@@ -99,7 +99,9 @@ public class GuiListener implements Listener {
         }
 
         if (!plugin.getQuestManager().isLevelUnlocked(data, levelId)) {
-            player.sendMessage(plugin.getConfigManager().getMessage("level-locked"));
+            long cooldownRemaining = plugin.getQuestManager().getLevelCooldownRemaining(data, levelId);
+            if (cooldownRemaining > 0L) plugin.getQuestManager().sendCooldownMessage(player, cooldownRemaining);
+            else player.sendMessage(plugin.getConfigManager().getMessage("level-locked"));
             return;
         }
 

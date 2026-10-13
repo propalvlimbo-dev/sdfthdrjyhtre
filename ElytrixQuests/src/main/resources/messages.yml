@@ -18,8 +18,11 @@ level-completed-no-reward: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EE
 level-unlocked: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aОткрыт новый уровень &f— &#F8BEFB%level%"
 
 quest-locked-sequence: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &cОшибка &f— сначала завершите предыдущее задание"
-# Оставлено для совместимости со старыми конфигами; между заданиями ожидания больше нет.
-quest-cooldown: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aУспешно &f— следующее задание уже доступно"
+# Ключ оставлен для обратной совместимости; новые сообщения используют отдельные ключи ниже.
+quest-cooldown: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &#F8BEFBПерерыв &f— следующее задание откроется через &#F8BEFB%time%"
+quest-cooldown-started: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aНаграда выдана автоматически &f— перерыв после выполнения: &#F8BEFB%time%"
+quest-cooldown-active: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &#F8BEFBПерерыв &f— следующее задание или уровень откроется через &#F8BEFB%time%"
+quest-cooldown-finished: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aУспешно &f— перерыв завершён, доступно следующее задание"
 quest-activated: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aУспешно &f— задание запущено: &#F8BEFB%quest%"
 quest-in-progress: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &#F8BEFBВ процессе &f— %quest% &7(%progress%)"
 quest-completed: "&f☁ &#F8BEFBᴇ&#F6BEFBʟ&#F3BEFBʏ&#F1BFFBᴛ&#EEBFFBʀ&#ECBFFBɪ&#E9BFFBx &7» &aУспешно &f— задание %quest% выполнено, награда выдана автоматически"

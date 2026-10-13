@@ -97,6 +97,7 @@ public class ConfigManager {
     public void reload() {
         plugin.reloadConfig();
         config = plugin.getConfig();
+        mergeMissingMessageKeys();
         messages = YamlConfiguration.loadConfiguration(messagesFile);
         quests = YamlConfiguration.loadConfiguration(questsFile);
     }

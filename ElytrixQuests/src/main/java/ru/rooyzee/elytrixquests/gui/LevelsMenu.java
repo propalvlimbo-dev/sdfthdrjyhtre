@@ -133,10 +133,19 @@ public class LevelsMenu implements InventoryHolder {
             lore.add("&#F8BEFB&l┃ ");
 
             if (!unlocked) {
-                lore.add("&#F8BEFB&l┃ &fСтатус: &cЗаблокировано");
-                lore.add("&#F8BEFB&l┃ &fТребование: &#F8BEFBПройти уровень " + (levelId - 1));
-                lore.add("&#F8BEFB&l┃ ");
-                lore.add("&7● &cСначала завершите предыдущий уровень");
+                long cooldownRemaining = plugin.getQuestManager().getLevelCooldownRemaining(data, levelId);
+                if (cooldownRemaining > 0L) {
+                    lore.add("&#F8BEFB&l┃ &fСтатус: &eПерерыв после уровня");
+                    lore.add("&#F8BEFB&l┃ &fДо открытия: &#F8BEFB"
+                            + plugin.getQuestManager().formatCooldownRemaining(cooldownRemaining));
+                    lore.add("&#F8BEFB&l┃ ");
+                    lore.add("&7● &fУровень откроется автоматически");
+                } else {
+                    lore.add("&#F8BEFB&l┃ &fСтатус: &cЗаблокировано");
+                    lore.add("&#F8BEFB&l┃ &fТребование: &#F8BEFBПройти предыдущий уровень");
+                    lore.add("&#F8BEFB&l┃ ");
+                    lore.add("&7● &cСначала завершите предыдущий уровень");
+                }
             } else if (completed) {
                 lore.add("&#F8BEFB&l┃ &fСтатус: &aПройден полностью");
                 lore.add("&#F8BEFB&l┃ &fКвесты: &#F8BEFB" + completedCount + " &fиз &#F8BEFB" + totalCount);
